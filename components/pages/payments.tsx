@@ -2,19 +2,29 @@
 
 import { useSelector, useDispatch } from "react-redux"
 import type { RootState, AppDispatch } from "@/lib/store"
-import { setCurrentPage, setDateFilter } from "@/lib/slices/paymentsSlice"
+
 import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Download, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { useEffect } from "react"
+import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice"
 
 export function Payments() {
   const dispatch = useDispatch<AppDispatch>()
-  const { payments, currentPage, itemsPerPage, dateFilter } = useSelector((state: RootState) => state.payments)
+  const { libraryPayments  } = useSelector((state: RootState) => state.payments)
+  const { userFullData,  } = useSelector((state: RootState) => state.auth)
 
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedPayments = payments.slice(startIndex, endIndex)
-  const totalPages = Math.ceil(payments.length / itemsPerPage)
+  // const startIndex = (currentPage - 1) * itemsPerPage
+  // const endIndex = startIndex + itemsPerPage
+  // const paginatedPayments = payments.slice(startIndex, endIndex)
+  // const totalPages = Math.ceil(payments.length / itemsPerPage)
+
+  useEffect(()=>{
+    if(!userFullData?.libraryId) return
+    dispatch(getPaymentsByLibrary(userFullData?.libraryId!))
+  },[userFullData?.libraryId])
+
+
 
   return (
     <div>
@@ -25,8 +35,8 @@ export function Payments() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <select
-              value={dateFilter}
-              onChange={(e) => dispatch(setDateFilter(e.target.value))}
+              value={'Last 30 Days'}
+              onChange={(e) => console.log(e.target.value)}
               className="px-4 py-2 rounded-lg bg-card border border-border text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option>Last 30 Days</option>
@@ -67,16 +77,16 @@ export function Payments() {
               </tr>
             </thead>
             <tbody>
-              {paginatedPayments.map((payment) => (
-                <tr key={payment.id} className="border-b border-border hover:bg-secondary/50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-foreground">{payment.studentName}</td>
+              {libraryPayments.map((payment) => (
+                <tr key={payment._id} className="border-b border-border hover:bg-secondary/50 transition-colors">
+                  <td className="px-6 py-4 text-sm font-medium text-foreground">{payment.user.name}</td>
                   <td className="px-6 py-4 text-sm font-medium text-foreground">${payment.amount.toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{payment.transactionId}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{payment.date}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{payment.razorpayPaymentId}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{new Date(payment.paymentDate).toLocaleDateString()}</td>
                   <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        payment.status === "Paid"
+                        payment.status === "completed"
                           ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                           : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                       }`}
@@ -90,7 +100,7 @@ export function Payments() {
           </table>
 
           {/* Pagination */}
-          <div className="px-6 py-4 border-t border-border flex items-center justify-between">
+          {/* <div className="px-6 py-4 border-t border-border flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
               Showing {startIndex + 1} to {Math.min(endIndex, payments.length)} of {payments.length} results
             </span>
@@ -114,7 +124,7 @@ export function Payments() {
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

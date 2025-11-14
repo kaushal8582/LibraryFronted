@@ -11,11 +11,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { deleteStudent } from "@/lib/slices/studentsSlice";
+import toast from "react-hot-toast";
 
-export function DeleteStudentDialog({ studentId }: { studentId: string }) {
-  const handleDelete = () => {
-    // Handle the delete logic here
-    console.log("Deleting student with ID:", studentId);
+export function DeleteStudentDialog({ studentId, setIsAction }: { studentId: string; setIsAction: (isAction: boolean) => void }) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleDelete = async () => {
+    const res = await dispatch(deleteStudent(studentId));
+
+    if(res.meta.requestStatus === "fulfilled"){
+      toast.success("Student deleted successfully");
+      setIsAction(true);
+    } else {
+      toast.error( "Failed to delete student");
+    }
+
   };
 
   return (
@@ -27,8 +40,8 @@ export function DeleteStudentDialog({ studentId }: { studentId: string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the student's
-            account and remove their data from our servers.
+            This action cannot be undone. This will permanently delete the
+            student's account and remove their data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -13,19 +13,25 @@ const MainPage = () => {
     (state: RootState) => state.auth
   );
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      window.location.href = "/auth/login";
-      return;
-    }
+  // useEffect(() => {
+  //   const accessToken = localStorage.getItem("accessToken");
+  //   if (!accessToken) {
+  //     window.location.href = "/auth/login";
+  //     return;
+  //   }
 
-    const fetchUser = async () => {
-      await dispatch(fetchCurrentUser());
-    };
+  //   const fetchUser = async () => {
+  //     await dispatch(fetchCurrentUser());
+  //   };
 
-    fetchUser();
-  }, [dispatch]);
+    
+  //   fetchUser();
+  // }, [dispatch]);
+  
+  useEffect(()=>{
+    
+    console.log("usr full dat",userFullData);
+  },[])
 
   if (isLoading) {
     return (

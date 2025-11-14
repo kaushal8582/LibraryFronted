@@ -7,6 +7,10 @@ interface RevenueChartProps {
 }
 
 export function RevenueChart({ data }: RevenueChartProps) {
+
+  console.log("data", data);
+
+
   return (
     <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6">
       <h3 className="text-lg font-semibold text-foreground mb-6">Monthly Revenue Overview</h3>

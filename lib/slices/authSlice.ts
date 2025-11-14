@@ -39,6 +39,17 @@ interface UserFullData {
   createdAt: string;
   lastLogin: string;
   libraryData: LibraryData;
+  studentData : {
+    address : string;
+    fee : string;
+    joinDate : string;
+    status : "active" | "inactive" | string;
+    timing : string;
+    userId : string;
+    _id : string;
+    nextDueDate : string;
+    isPaymentDoneForThisMonth : boolean;
+  }
 }
 
 
@@ -48,12 +59,18 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  userFullData : UserFullData | null
+  userFullData : UserFullData | null,
+  libraries : LibraryData[]
 }
 
 interface LoginCredentials {
   email: string;
   password: string;
+}
+
+interface UpdatePasswordCredentials {
+  oldPassword: string;
+  newPassword: string;
 }
 
 interface RegisterCredentials {
@@ -69,7 +86,8 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
-  userFullData : null
+  userFullData : null,
+  libraries : []
 };
 
 // Async thunks for API calls
@@ -94,6 +112,21 @@ export const loginUser = createAsyncThunk(
       };
     } catch (error: any) {
       return rejectWithValue(error.message || "Login failed");
+    }
+  }
+);
+export const updatePassword = createAsyncThunk(
+  "auth/updatePassword",
+  async (credentials: UpdatePasswordCredentials, { rejectWithValue }) => {
+    try {
+      const response:any = await apiCaller<{ user: User; token: string }>({
+        method: "POST",
+        url: "/auth/update-password",
+        data: credentials,
+      });
+       return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Update password failed");
     }
   }
 );
@@ -154,6 +187,23 @@ export const fetchCurrentUser = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to fetch user");
+    }
+  }
+);
+export const fetchAllLibrary = createAsyncThunk(
+  "auth/fetchAllLibrary",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: LibraryData[] }>({
+        method: "GET",
+        url: "/libraries",
+      });
+
+      console.log("response ",response);
+      
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch libraries");
     }
   }
 );
@@ -233,7 +283,37 @@ const authSlice = createSlice({
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+
+      // Fetch all libraries cases
+      .addCase(fetchAllLibrary.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllLibrary.fulfilled, (state, action: PayloadAction<LibraryData[]>) => {
+        state.isLoading = false;
+        state.libraries = action.payload;
+      })
+      .addCase(fetchAllLibrary.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+
+      // update password cases
+      .addCase(updatePassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updatePassword.fulfilled, (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
+
+
   },
 });
 

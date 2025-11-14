@@ -1,16 +1,14 @@
 'use client'
 
-import { Sidebar } from "@/components/sidebar"
-import { Settings } from "@/components/pages/settings"
-import { fetchCurrentUser } from "@/lib/slices/authSlice";
-import { useEffect } from "react";
+import { Sidebar } from "@/components/sidebar";
+import { Settings } from "@/components/pages/settings";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
+import { useEffect } from "react";
+import { fetchCurrentUser } from "@/lib/slices/authSlice";
 
 export default function SettingsPage() {
-
   const dispatch = useDispatch<AppDispatch>();
- 
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -26,9 +24,6 @@ export default function SettingsPage() {
     fetchUser();
   }, [dispatch]);
 
-
-
-
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -37,4 +32,4 @@ export default function SettingsPage() {
       </main>
     </div>
   );
-};
+}

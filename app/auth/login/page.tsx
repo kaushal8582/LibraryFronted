@@ -8,28 +8,69 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/lib/store";
-import { loginUser } from "@/lib/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { fetchAllLibrary, fetchCurrentUser, loginUser } from "@/lib/slices/authSlice";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type LoginFormInputs = {
   email: string;
   password: string;
+  role: "student" | "librarian";
+  libraryId?: string;
 };
 
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+  const [selectedRole, setSelectedRole] = useState<"student" | "librarian">("librarian");
   
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { libraries } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  console.log("librariessss",libraries);
   
   const { 
     register, 
     handleSubmit, 
-    formState: { errors } 
-  } = useForm<LoginFormInputs>();
+    formState: { errors },
+    setValue,
+    watch 
+  } = useForm<LoginFormInputs>({
+    defaultValues: {
+      role: "librarian"
+    }
+  });
+
+  // Fetch libraries when student role is selected
+  useEffect(() => {
+    if (selectedRole === "student") {
+      const fetchLibraries = async () => {
+        try {
+          const res = await dispatch(fetchAllLibrary());
+          if(res.meta.requestStatus === "fulfilled"){
+            // setLibraries(res.payload);
+          }
+        } catch (error) {
+          console.error("Failed to fetch libraries:", error);
+        }
+      };
+      fetchLibraries();
+    }
+  }, [selectedRole]);
   
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginFormInputs) => {
@@ -46,22 +87,42 @@ export default function LoginPage() {
     }
   });
 
+  // Watch role changes
+  const watchedRole = watch("role");
+
+  // Update selected role when form role changes
+  useEffect(() => {
+    if (watchedRole) {
+      setSelectedRole(watchedRole);
+    }
+  }, [watchedRole]);
+
   const onSubmit: SubmitHandler<LoginFormInputs> = async(data) => {
-    // loginMutation.mutate(data);
+    console.log("Login data:", data);
 
-    console.log("data ",data);
+    // Prepare login data based on role
+    const loginData = {
+      email: data.email,
+      password: data.password,
+      role: data.role,
+      ...(data.role === "student" && data.libraryId && { libraryId: data.libraryId })
+    };
 
-    const res = await dispatch(loginUser(data));
+    const res:any = await dispatch(loginUser(loginData as any));
 
     console.log("login response ",res);
     if(res.meta.requestStatus === "fulfilled"){
-      router.push("/");
+
+     await dispatch(fetchCurrentUser())
+
+      console.log("res.payload?.user?.role",res.payload?.user?.role);
+     
+      if (res.payload?.user?.role === "student") {
+        router.push("/student/dashboard");
+      } else {
+        router.push("/");
+      }
     }
-
-
-
-
-
   };
 
   return (
@@ -116,6 +177,55 @@ export default function LoginPage() {
               </button>
               {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
             </div>
+
+            {/* Role Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="role">Login as</Label>
+              <Select
+                onValueChange={(value) => {
+                  setSelectedRole(value as "student" | "librarian");
+                  setValue("role", value as "student" | "librarian");
+                }}
+                defaultValue="librarian"
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Role</SelectLabel>
+                    <SelectItem value="librarian">Librarian</SelectItem>
+                    <SelectItem value="student">Student</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+            </div>
+
+            {/* Library Selection for Students */}
+            {selectedRole === "student" && (
+              <div className="space-y-2">
+                <Label htmlFor="libraryId">Library</Label>
+                <Select
+                  onValueChange={(value) => setValue("libraryId", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select library" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Libraries</SelectLabel>
+                      {libraries.map((library) => (
+                        <SelectItem key={library._id} value={library._id}>
+                          {library.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {errors.libraryId && <p className="text-sm text-red-500">{errors.libraryId.message}</p>}
+              </div>
+            )}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button 

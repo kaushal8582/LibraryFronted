@@ -1,77 +1,163 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { apiCaller } from "../Network/api";
+
+// ------------------ Types ------------------
+
+interface MonthlyRevenue {
+  month: string;
+  revenue: number;
+}
+
+interface RecentPayment {
+  id: string;
+  name: string;
+  date: string;
+  amount: number;
+  avatar: string;
+}
+
+interface LibrarySummary {
+  totalStudents: number;
+  totalPendingPayments: number;
+  totalPaidPayments: number;
+  totalRevenue: number;
+  monthlyRevenue: MonthlyRevenue[];
+  recentPayments?: RecentPayment[];
+}
+
+interface PaymentTrend {
+  date: string;
+  completed: number;
+  pending: number;
+  failed: number;
+}
+
+interface RevenueByMonth {
+  month: string;
+  revenue: number;
+}
+
+interface StudentGrowth {
+  month: string;
+  count: number;
+}
+
+interface LibraryAnalytics {
+  paymentTrends: PaymentTrend[];
+  revenueByMonth: RevenueByMonth[];
+  studentGrowth: StudentGrowth[];
+}
+
+// ------------------ State ------------------
 
 interface DashboardState {
-  totalStudents: number
-  pendingPayments: number
-  paidStudents: number
-  totalRevenue: number
-  monthlyRevenue: Array<{ month: string; revenue: number }>
-  recentPayments: Array<{
-    id: string
-    name: string
-    date: string
-    amount: number
-    avatar: string
-  }>
+  summary: LibrarySummary | null;
+  analytics: LibraryAnalytics | null;
+  isLoading: boolean;
+  error: string | null;
 }
 
 const initialState: DashboardState = {
-  totalStudents: 1250,
-  pendingPayments: 1500,
-  paidStudents: 850,
-  totalRevenue: 8500,
-  monthlyRevenue: [
-    { month: "Jan", revenue: 2400 },
-    { month: "Feb", revenue: 3200 },
-    { month: "Mar", revenue: 2800 },
-    { month: "Apr", revenue: 3100 },
-    { month: "May", revenue: 4200 },
-    { month: "Jun", revenue: 4800 },
-    { month: "Jul", revenue: 3900 },
-  ],
-  recentPayments: [
+  summary: null,
+  analytics: null,
+  isLoading: false,
+  error: null,
+};
+
+// ------------------ Async Thunks ------------------
+
+// 📊 Get summary for library dashboard
+export const fetchLibrarySummary = createAsyncThunk(
+  "dashboard/fetchLibrarySummary",
+  async (libraryId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: LibrarySummary }>({
+        method: "GET",
+        url: `/dashboard/library/${libraryId}/summary`,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch library summary");
+    }
+  }
+);
+
+// 📈 Get analytics (payment trends, student growth, etc.)
+export const fetchLibraryAnalytics = createAsyncThunk(
+  "dashboard/fetchLibraryAnalytics",
+  async (
     {
-      id: "1",
-      name: "Emily White",
-      date: "Oct 26, 2023",
-      amount: 15,
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
-    },
-    {
-      id: "2",
-      name: "David Green",
-      date: "Oct 26, 2023",
-      amount: 25,
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-    },
-    {
-      id: "3",
-      name: "Sarah Blue",
-      date: "Oct 25, 2023",
-      amount: 15,
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    },
-    {
-      id: "4",
-      name: "James Brown",
-      date: "Oct 24, 2023",
-      amount: 50,
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James",
-    },
-    {
-      id: "5",
-      name: "Laura Black",
-      date: "Oct 24, 2023",
-      amount: 25,
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Laura",
-    },
-  ],
-}
+      libraryId,
+      startDate,
+      endDate,
+    }: { libraryId: string; startDate?: string; endDate?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const query = [];
+      if (startDate) query.push(`startDate=${startDate}`);
+      if (endDate) query.push(`endDate=${endDate}`);
+      const queryString = query.length ? `?${query.join("&")}` : "";
+
+      const response = await apiCaller<{ data: LibraryAnalytics }>({
+        method: "GET",
+        url: `/dashboard/library/${libraryId}/analytics${queryString}`,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch analytics");
+    }
+  }
+);
+
+// ------------------ Slice ------------------
 
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
-  reducers: {},
-})
+  reducers: {
+    clearDashboardError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // 📊 Summary
+      .addCase(fetchLibrarySummary.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchLibrarySummary.fulfilled,
+        (state, action: PayloadAction<LibrarySummary>) => {
+          state.isLoading = false;
+          state.summary = action.payload;
+        }
+      )
+      .addCase(fetchLibrarySummary.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
 
-export default dashboardSlice.reducer
+      // 📈 Analytics
+      .addCase(fetchLibraryAnalytics.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchLibraryAnalytics.fulfilled,
+        (state, action: PayloadAction<LibraryAnalytics>) => {
+          state.isLoading = false;
+          state.analytics = action.payload;
+        }
+      )
+      .addCase(fetchLibraryAnalytics.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export const { clearDashboardError } = dashboardSlice.actions;
+export default dashboardSlice.reducer;

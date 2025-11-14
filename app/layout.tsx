@@ -4,10 +4,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Providers } from "@/app/providers";
-import { Toaster } from "react-hot-toast"; // <-- import Toaster
+import { Toaster } from "react-hot-toast";
+import AppInitializer from "@/components/AppInitializer";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"] });
+const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "LibTrack - Library Management",
@@ -17,26 +18,28 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
+      <head>
+        <script src="https://checkout.razorpay.com/v1/checkout.js" />
+      </head>
       <body className={`font-sans antialiased`}>
-        <Providers>{children}</Providers>
-
-        {/* Toast notifications */}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              fontSize: "14px",
-              borderRadius: "8px",
-            },
-          }}
-        />
-
-        <Analytics />
+        <Providers>
+          <AppInitializer>{children}</AppInitializer>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                fontSize: "14px",
+                borderRadius: "8px",
+              },
+            }}
+          />
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );

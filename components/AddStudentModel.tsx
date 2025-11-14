@@ -10,10 +10,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { addStudent } from "@/lib/slices/studentsSlice";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const createStudentSchema = Joi.object({
   name: Joi.string().required().min(2).max(100).label("Name"),
@@ -23,9 +27,12 @@ const createStudentSchema = Joi.object({
   fee: Joi.string().required().label("Fee"),
   startTime: Joi.string().required().label("Start Time"),
   endTime: Joi.string().required().label("End Time"),
+  joinDate: Joi.string().required().label("Joining Date"),
 });
 
-export function AddStudentModel() {
+export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void}) {
+  const [open, setOpen] = useState(false); 
+
   const {
     register,
     handleSubmit,
@@ -35,7 +42,9 @@ export function AddStudentModel() {
     resolver: joiResolver(createStudentSchema),
   });
 
-  const onSubmit = (data: any) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onSubmit = async (data: any) => {
     const payload = {
       ...data,
       timing: `${data.startTime} - ${data.endTime}`,
@@ -43,20 +52,26 @@ export function AddStudentModel() {
     delete payload.startTime;
     delete payload.endTime;
 
-    console.log("📦 Final Data Sent to Backend:", payload);
+    // console.log("📦 Final Data Sent to Backend:", payload);
 
-    
+    const res = await dispatch(addStudent(payload));
 
-
-
-    reset();
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("Student added successfully 🎉");
+      reset();
+      setOpen(false); 
+      setIsAction(true);
+    } else {
+      toast.error("Failed to add student");
+    }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Add Student</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Button variant="outline" onClick={() => setOpen(true)}>
+        Add Student
+      </Button>
+
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>Add Student</DialogTitle>
@@ -71,33 +86,31 @@ export function AddStudentModel() {
             <Label htmlFor="name">Name</Label>
             <Input id="name" placeholder="Enter name" {...register("name")} />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message?.toString()}</p>
+              <p className="text-red-500 text-sm">
+                {errors.name.message?.toString()}
+              </p>
             )}
           </div>
 
           {/* Email */}
           <div className="flex flex-col">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              placeholder="Enter email"
-              {...register("email")}
-            />
+            <Input id="email" placeholder="Enter email" {...register("email")} />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message?.toString()}</p>
+              <p className="text-red-500 text-sm">
+                {errors.email.message?.toString()}
+              </p>
             )}
           </div>
 
           {/* Phone */}
           <div className="flex flex-col">
             <Label htmlFor="phone">Phone No</Label>
-            <Input
-              id="phone"
-              placeholder="Enter 10-digit phone"
-              {...register("phone")}
-            />
+            <Input id="phone" placeholder="Enter 10-digit phone" {...register("phone")} />
             {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message?.toString()}</p>
+              <p className="text-red-500 text-sm">
+                {errors.phone.message?.toString()}
+              </p>
             )}
           </div>
 
@@ -106,7 +119,20 @@ export function AddStudentModel() {
             <Label htmlFor="fee">Fee</Label>
             <Input id="fee" placeholder="Enter fee amount" {...register("fee")} />
             {errors.fee && (
-              <p className="text-red-500 text-sm">{errors.fee.message?.toString()}</p>
+              <p className="text-red-500 text-sm">
+                {errors.fee.message?.toString()}
+              </p>
+            )}
+          </div>
+
+          {/* Join Date */}
+          <div className="flex flex-col">
+            <Label htmlFor="joinDate">Joining Date</Label>
+            <Input id="joinDate" type="date" {...register("joinDate")} />
+            {errors.joinDate && (
+              <p className="text-red-500 text-sm">
+                {errors.joinDate.message?.toString()}
+              </p>
             )}
           </div>
 
@@ -121,7 +147,7 @@ export function AddStudentModel() {
                 <Input type="time" id="startTime" {...register("startTime")} />
                 {errors.startTime && (
                   <p className="text-red-500 text-sm">
-                    {errors?.startTime?.message?.toString()}
+                    {errors.startTime.message?.toString()}
                   </p>
                 )}
               </div>
@@ -130,9 +156,9 @@ export function AddStudentModel() {
                   End Time
                 </Label>
                 <Input type="time" id="endTime" {...register("endTime")} />
-                {errors?.endTime && (
+                {errors.endTime && (
                   <p className="text-red-500 text-sm">
-                    {errors?.endTime?.message?.toString()}
+                    {errors.endTime.message?.toString()}
                   </p>
                 )}
               </div>
@@ -142,13 +168,11 @@ export function AddStudentModel() {
           {/* Address */}
           <div className="flex flex-col">
             <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              placeholder="Enter address"
-              {...register("address")}
-            />
+            <Input id="address" placeholder="Enter address" {...register("address")} />
             {errors.address && (
-              <p className="text-red-500 text-sm">{errors?.address?.message?.toString()}</p>
+              <p className="text-red-500 text-sm">
+                {errors.address.message?.toString()}
+              </p>
             )}
           </div>
 

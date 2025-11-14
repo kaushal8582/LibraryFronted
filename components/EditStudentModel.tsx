@@ -14,51 +14,93 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { editStudent } from "@/lib/slices/studentsSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const editStudentSchema = Joi.object({
   name: Joi.string().required().min(2).max(100).label("Name"),
   email: Joi.string().email({ tlds: false }).required().label("Email"),
-  phone: Joi.string().pattern(/^\d{10}$/).optional().label("Phone Number"),
+  phone: Joi.string()
+    .pattern(/^\d{10}$/)
+    .optional()
+    .label("Phone Number"),
   address: Joi.string().optional().allow("").label("Address"),
   fee: Joi.string().optional().label("Fee"),
+  joinDate: Joi.string().optional().label("Join Date"),
+  status: Joi.string()
+    .valid("active", "inactive", "suspended")
+    .required()
+    .label("Status"),
   startTime: Joi.string().optional().label("Start Time"),
   endTime: Joi.string().optional().label("End Time"),
 });
 
-export function EditStudentModel({ student }: { student: any }) {
+export function EditStudentModel({ student, setIsAction }: { student: any; setIsAction: (isAction: boolean) => void }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch,
   } = useForm({
     resolver: joiResolver(editStudentSchema),
     defaultValues: {
-      name: student?.name || "",
-      email: student?.email || "",
-      phone: student?.phone || "",
+      name: student?.user?.name || "",
+      email: student?.user?.email || "",
+      phone: student?.user?.phone || "",
       address: student?.address || "",
       fee: student?.fee || "",
-      // Extract start and end times from stored timing if available
+      status: student?.status || "active",
+      joinDate: student?.joinDate?.split("T")[0] || "",
       startTime: student?.timing?.split(" - ")[0] || "",
       endTime: student?.timing?.split(" - ")[1] || "",
     },
   });
 
-  const onSubmit = (data: any) => {
+  
+  const dispatch = useDispatch<AppDispatch>();
+  const [open, setOpen] = useState(false);
+
+
+  const onSubmit = async(data: any) => {
     const payload = {
       ...data,
-      timing: data.startTime && data.endTime ? `${data.startTime} - ${data.endTime}` : student?.timing,
+      timing:
+        data.startTime && data.endTime
+          ? `${data.startTime} - ${data.endTime}`
+          : student?.timing,
     };
     delete payload.startTime;
     delete payload.endTime;
+
+  const res = await  dispatch(editStudent({ id: student._id, updates: payload }));
+
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("Student updated successfully");
+      reset(payload);
+       setOpen(false); 
+      setIsAction(true);
+    } else {
+      toast.error( "Failed to update student");
+    }
 
     console.log("📝 Updated Student Data:", payload);
     reset(payload);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Edit Student</Button>
       </DialogTrigger>
@@ -76,7 +118,9 @@ export function EditStudentModel({ student }: { student: any }) {
             <Label htmlFor="name">Name</Label>
             <Input id="name" {...register("name")} />
             {errors.name && (
-              <p className="text-red-500 text-sm">{String(errors.name.message || "")}</p>
+              <p className="text-red-500 text-sm">
+                {String(errors.name.message || "")}
+              </p>
             )}
           </div>
 
@@ -85,7 +129,9 @@ export function EditStudentModel({ student }: { student: any }) {
             <Label htmlFor="email">Email</Label>
             <Input id="email" {...register("email")} />
             {errors.email && (
-              <p className="text-red-500 text-sm">{String(errors.email.message || "")}</p>
+              <p className="text-red-500 text-sm">
+                {String(errors.email.message || "")}
+              </p>
             )}
           </div>
 
@@ -94,7 +140,33 @@ export function EditStudentModel({ student }: { student: any }) {
             <Label htmlFor="phone">Phone</Label>
             <Input id="phone" {...register("phone")} />
             {errors.phone && (
-              <p className="text-red-500 text-sm">{String(errors.phone.message || "")}</p>
+              <p className="text-red-500 text-sm">
+                {String(errors.phone.message || "")}
+              </p>
+            )}
+          </div>
+
+          {/* Status */}
+          <div className="flex flex-col w-full">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              value={watch("status")}
+              onValueChange={(value) => setValue("status", value)}
+            >
+              <SelectTrigger id="status" className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent className="w-full">
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="suspended">Suspended</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {errors.status && (
+              <p className="text-red-500 text-sm">
+                {String(errors.status.message || "")}
+              </p>
             )}
           </div>
 
@@ -103,7 +175,18 @@ export function EditStudentModel({ student }: { student: any }) {
             <Label htmlFor="fee">Fee</Label>
             <Input id="fee" {...register("fee")} />
             {errors.fee && (
-              <p className="text-red-500 text-sm">{String(errors.fee.message || "")}</p>
+              <p className="text-red-500 text-sm">
+                {String(errors.fee.message || "")}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="joinDate">Joining Date</Label>
+            <Input type="date" id="joinDate" {...register("joinDate")} />
+            {errors.joinDate && (
+              <p className="text-red-500 text-sm">
+                {String(errors.joinDate.message || "")}
+              </p>
             )}
           </div>
 
@@ -141,7 +224,9 @@ export function EditStudentModel({ student }: { student: any }) {
             <Label htmlFor="address">Address</Label>
             <Input id="address" {...register("address")} />
             {errors.address && (
-              <p className="text-red-500 text-sm">{String(errors.address.message || "")}</p>
+              <p className="text-red-500 text-sm">
+                {String(errors.address.message || "")}
+              </p>
             )}
           </div>
 
