@@ -2,7 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -30,37 +37,38 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  
-  const { 
-    register, 
-    handleSubmit, 
+
+  const {
+    register,
+    handleSubmit,
     watch,
-    formState: { errors } 
+    formState: { errors },
   } = useForm<RegisterFormInputs>();
-  
+
   const password = watch("password");
-  
+
   const registerMutation = useMutation({
-     mutationFn: async (userData: Omit<RegisterFormInputs, "confirmPassword">) => {
-    console.log("Sending registration data:", userData);
-    const res = await registerUser(userData); 
-    console.log("res",res)
-    return res;
-  },
+    mutationFn: async (
+      userData: Omit<RegisterFormInputs, "confirmPassword">
+    ) => {
+      console.log("Sending registration data:", userData);
+      const res = await registerUser(userData);
+      console.log("res", res);
+      return res;
+    },
     onSuccess: () => {
-      
       router.push("/auth/login");
     },
     onError: (error) => {
       console.error("Registration failed:", error);
-    }
+    },
   });
 
-  const onSubmit: SubmitHandler<RegisterFormInputs> = async(data) => {
+  const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
     const { confirmPassword, ...userData } = data;
-    
-    const res:any = await dispatch(registerUser(userData)); 
-    if(res.payload.success){
+
+    const res: any = await dispatch(registerUser(userData));
+    if (res.payload.success) {
       toast.success("Registration successful!");
       router.push("/auth/login");
     }
@@ -70,7 +78,9 @@ export default function RegisterPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create an Account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Create an Account
+          </CardTitle>
           <CardDescription className="text-center">
             Enter your information to create an account
           </CardDescription>
@@ -84,16 +94,24 @@ export default function RegisterPage() {
                 placeholder="John Doe"
                 {...register("name", { required: "Name is required" })}
               />
-              {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-sm text-red-500">{errors.name.message}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="libraryName">Full Library Name</Label>
               <Input
                 id="libraryName"
                 placeholder="John Doe Library"
-                {...register("libraryName", { required: "Library Name is required" })}
+                {...register("libraryName", {
+                  required: "Library Name is required",
+                })}
               />
-              {errors.libraryName && <p className="text-sm text-red-500">{errors.libraryName.message}</p>}
+              {errors.libraryName && (
+                <p className="text-sm text-red-500">
+                  {errors.libraryName.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -101,15 +119,17 @@ export default function RegisterPage() {
                 id="email"
                 type="email"
                 placeholder="name@example.com"
-                {...register("email", { 
+                {...register("email", {
                   required: "Email is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address"
-                  }
+                    message: "Invalid email address",
+                  },
                 })}
               />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="phoneNo">Phone Number</Label>
@@ -117,15 +137,17 @@ export default function RegisterPage() {
                 id="phoneNo"
                 type="tel"
                 placeholder="123-456-7890"
-                {...register("phoneNo", { 
+                {...register("phoneNo", {
                   required: "Phone Number is required",
                   pattern: {
-                     value: /^[0-9]{10}$/,
-                    message: "Invalid phone number format"
-                  }
+                    value: /^[0-9]{10}$/,
+                    message: "Invalid phone number format",
+                  },
                 })}
               />
-              {errors.phoneNo && <p className="text-sm text-red-500">{errors.phoneNo.message}</p>}
+              {errors.phoneNo && (
+                <p className="text-sm text-red-500">{errors.phoneNo.message}</p>
+              )}
             </div>
             <div className="relative space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -133,12 +155,12 @@ export default function RegisterPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                {...register("password", { 
+                {...register("password", {
                   required: "Password is required",
                   minLength: {
                     value: 6,
-                    message: "Password must be at least 6 characters"
-                  }
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
               />
               <button
@@ -148,7 +170,11 @@ export default function RegisterPage() {
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
             {/* <div className="relative space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -172,12 +198,14 @@ export default function RegisterPage() {
             </div> */}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full"
               disabled={registerMutation.isPending}
             >
-              {registerMutation.isPending ? "Creating Account..." : "Create Account"}
+              {registerMutation.isPending
+                ? "Creating Account..."
+                : "Create Account"}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{" "}

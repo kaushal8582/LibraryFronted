@@ -21,7 +21,7 @@ export default function AppInitializer({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (!token) {
-      if (pathname !== "/auth/login") {
+      if (pathname !== "/auth/login" && pathname !== "/auth/register") {
         router.push("/auth/login");
       }
       return;
