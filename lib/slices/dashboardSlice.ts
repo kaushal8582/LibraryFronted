@@ -55,6 +55,7 @@ interface DashboardState {
   analytics: LibraryAnalytics | null;
   isLoading: boolean;
   error: string | null;
+  sidebarOpen: boolean;
 }
 
 const initialState: DashboardState = {
@@ -62,6 +63,7 @@ const initialState: DashboardState = {
   analytics: null,
   isLoading: false,
   error: null,
+  sidebarOpen: false,
 };
 
 // ------------------ Async Thunks ------------------
@@ -120,6 +122,9 @@ const dashboardSlice = createSlice({
     clearDashboardError: (state) => {
       state.error = null;
     },
+    toggleSidebar: (state, action: PayloadAction<boolean>) => {
+      state.sidebarOpen = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -159,5 +164,5 @@ const dashboardSlice = createSlice({
   },
 });
 
-export const { clearDashboardError } = dashboardSlice.actions;
+export const { clearDashboardError,toggleSidebar } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

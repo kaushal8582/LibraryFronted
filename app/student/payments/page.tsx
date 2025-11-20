@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { Sidebar } from "@/components/sidebar";
 import { getPaymentsByStudent } from "@/lib/slices/paymentsSlice";
 import { formatMongoDate } from "@/common/commonAction";
+import { Header } from "@/components/header";
 
 interface Payment {
   _id: string;
@@ -111,8 +112,8 @@ export default function StudentPayments() {
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-        <div className="p-6 space-y-6">
-          <div className="flex justify-between items-center">
+        <div className=" space-y-6">
+          {/* <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Payment History</h1>
               <p className="text-muted-foreground">
@@ -123,10 +124,12 @@ export default function StudentPayments() {
               <CreditCard className="h-4 w-4 mr-2" />
               Make Payment
             </Button>
-          </div>
+          </div> */}
+
+          <Header title="Payment History" subtitle="View all your payment transactions and history" />
 
         
-
+          <div className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="pb-3">
@@ -239,6 +242,7 @@ export default function StudentPayments() {
               )}
             </CardContent>
           </Card>
+          </div>
 
           {/* Summary Card */}
           

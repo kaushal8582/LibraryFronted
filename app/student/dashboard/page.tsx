@@ -25,6 +25,7 @@ import {
 import { Sidebar } from "@/components/sidebar";
 import { updatePassword } from "@/lib/slices/authSlice";
 import toast from "react-hot-toast";
+import { Header } from "@/components/header";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -82,8 +83,8 @@ export default function StudentDashboard() {
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-        <div className="p-6 space-y-6">
-          <div className="flex justify-between items-center">
+        <div className=" space-y-6">
+          {/* <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Student Dashboard</h1>
             <div className="flex items-center gap-2">
               <Badge variant="outline">Student</Badge>
@@ -93,7 +94,10 @@ export default function StudentDashboard() {
                 {studentData?.isActive ? "Active" : "Inactive"}
               </Badge>
             </div>
-          </div>
+          </div> */}
+           <Header title="Dashboard" />
+
+           <div className="p-6 space-y-6">
 
           {/* Personal Information Card */}
           <Card>
@@ -331,6 +335,10 @@ export default function StudentDashboard() {
               </Card>
             </div>
           )}
+
+          </div>
+
+
         </div>
       </main>
     </div>

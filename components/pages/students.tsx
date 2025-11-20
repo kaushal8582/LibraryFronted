@@ -27,27 +27,32 @@ import {
 } from "@/components/ui/table";
 import { capitalizeFirstChar, formatMongoDate } from "@/common/commonAction";
 import { useRouter } from "next/navigation";
+import { useDebounce } from "@/common/debounce";
+import { AddCashPaymentModal } from "../AddCashPaymentDialog";
+import { useMediaQuery } from "@/common/useMediaQuery";
 
 export function Students() {
+  const isMobile = useMediaQuery("(max-width:600px)");
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { filteredStudents, searchQuery } = useSelector(
     (state: RootState) => state.students
   );
   const [search, setSearch] = useState("");
-  const [isAction,setIsAction] = useState<boolean>(false);
+  const [isAction, setIsAction] = useState<boolean>(false);
+
+  const debounceSearchValue = useDebounce(search, 500);
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    dispatch(searchStudents(value));
   };
 
   const queryParams = new URLSearchParams();
 
   useEffect(() => {
-    queryParams.append("search", search);
+    queryParams.append("search", debounceSearchValue);
     dispatch(getStudents(queryParams.toString()));
-  }, [dispatch, search,isAction]);
+  }, [dispatch, debounceSearchValue, isAction]);
 
   return (
     <div>
@@ -58,7 +63,7 @@ export function Students() {
 
       <div className="p-8 space-y-6">
         {/* Controls */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex gap-3 flex-1">
             <div className="relative flex-1 max-w-md">
               <Input
@@ -69,22 +74,23 @@ export function Students() {
                 className="w-full pl-4 pr-4 py-2 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
+
             <Button
               variant="outline"
+              disabled={true}
               className="flex items-center gap-2 bg-transparent"
             >
-              <Filter className="w-4 h-4" />
-              Filter
-            </Button>
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 bg-transparent"
-            >
-              <Download className="w-4 h-4" />
-              Export
+              {isMobile ? (
+                <Download className="w-4 h-4" />
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Export
+                </>
+              )}
             </Button>
           </div>
-          <AddStudentModel setIsAction ={setIsAction} />
+          <AddStudentModel setIsAction={setIsAction} />
         </div>
 
         {/* Table */}
@@ -102,10 +108,20 @@ export function Students() {
             </TableHeader>
             <TableBody>
               {filteredStudents.map((student) => (
-                <TableRow key={student._id} onClick={() => router.push(`/students/${student.user?._id}`)} className="cursor-pointer">
-                  <TableCell className="font-medium">{capitalizeFirstChar(student?.user?.name || "")}</TableCell>
-                  <TableCell className="font-medium">{student?.user?.email || ""}</TableCell>
-                  <TableCell>{formatMongoDate(student?.joinDate || "")}</TableCell>
+                <TableRow
+                  key={student._id}
+                  onClick={() => router.push(`/students/${student.user?._id}`)}
+                  className="cursor-pointer"
+                >
+                  <TableCell className="font-medium">
+                    {capitalizeFirstChar(student?.user?.name || "")}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {student?.user?.email || ""}
+                  </TableCell>
+                  <TableCell>
+                    {formatMongoDate(student?.joinDate || "")}
+                  </TableCell>
                   <TableCell>${student.fee} / mo</TableCell>
                   <TableCell>
                     <span
@@ -126,15 +142,43 @@ export function Students() {
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
+
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/students/${student.user?._id}`)}>
+                        <DropdownMenuItem
+                          style={{
+                            height: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: 500,
+                          }}
+                          onClick={() =>
+                            router.push(`/students/${student.user?._id}`)
+                          }
+                        >
                           View Details
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <EditStudentModel student={student} setIsAction={setIsAction} />
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <EditStudentModel
+                              student={student}
+                              setIsAction={setIsAction}
+                            />
+                          </div>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <DeleteStudentDialog studentId={student._id} setIsAction={setIsAction} />
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <AddCashPaymentModal
+                              studentId={student.user?._id}
+                              setIsAction={setIsAction}
+                            />
+                          </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <DeleteStudentDialog
+                            studentId={student._id}
+                            setIsAction={setIsAction}
+                          />
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

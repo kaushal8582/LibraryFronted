@@ -37,6 +37,7 @@ import paymentService from "@/lib/services/paymentService";
 import toast from "react-hot-toast";
 import { formatMongoDate } from "@/common/commonAction";
 import { fetchCurrentUser } from "@/lib/slices/authSlice";
+import { Header } from "@/components/header";
 
 interface PendingPayment {
   _id: string;
@@ -138,8 +139,8 @@ export default function StudentPayment() {
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-        <div className="p-6 space-y-6 max-w-4xl mx-auto">
-          <div className="flex justify-between items-center">
+        <div className=" space-y-6 max-w-4xl mx-auto">
+          {/* <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Make Payment</h1>
               <p className="text-muted-foreground">
@@ -152,9 +153,13 @@ export default function StudentPayment() {
             >
               View Payment History
             </Button>
-          </div>
+          </div> */}
+
+          <Header title="Make Payment"  subtitle=" Pay your monthly library fees securely"/>
 
           {/* Pending Payments */}
+
+          <div className="p-6 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -194,6 +199,7 @@ export default function StudentPayment() {
               )}
             </CardContent>
           </Card>
+          </div>
         </div>
       </main>
     </div>

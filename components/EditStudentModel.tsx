@@ -102,9 +102,9 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit Student</Button>
+        <Button onClick={(e)=>e.stopPropagation()} className="h-10 px-4 text-sm w-full " variant="ghost">Edit Student</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent onClick={(e)=>e.stopPropagation()} className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>Edit Student</DialogTitle>
           <DialogDescription>

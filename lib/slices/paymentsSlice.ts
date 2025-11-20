@@ -111,6 +111,26 @@ export const getPaymentsByLibrary = createAsyncThunk(
   }
 );
 
+export const makePaymentInCash = createAsyncThunk(
+  "payments/makeInCash",
+  async (paymentData: {
+    studentId: string;
+    paymentDate: string;
+    numberOfMonths: number;
+  }, { rejectWithValue }) => {
+    try {
+      const res: any = await apiCaller({
+        method: "POST",
+        url: `/payments/cash`,
+        data: paymentData,
+      });
+      return res.data; 
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to make payment in cash");
+    }
+  }
+);
+
 
 
 
@@ -164,6 +184,22 @@ const paymentsSlice = createSlice({
         state.libraryPayments = action.payload || [];
       })
       .addCase(getPaymentsByLibrary.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+
+      // ─── Make Payment in Cash ───
+      .addCase(makePaymentInCash.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(makePaymentInCash.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.payments.push(action.payload);
+        state.filteredPayments.push(action.payload);
+        state.totalAmount += action.payload.amount;
+        state.totalPending += action.payload.numberOfMonths;
+      })
+      .addCase(makePaymentInCash.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })

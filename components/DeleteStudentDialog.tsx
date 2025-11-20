@@ -34,9 +34,9 @@ export function DeleteStudentDialog({ studentId, setIsAction }: { studentId: str
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete</Button>
+        <Button onClick={(e)=>e.stopPropagation()} className="h-10 px-4 text-sm w-full text-red-600" variant="ghost">Delete</Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent onClick={(e)=>e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -45,8 +45,8 @@ export function DeleteStudentDialog({ studentId, setIsAction }: { studentId: str
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+          <AlertDialogCancel onClick={(e)=>e.stopPropagation()}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={(e)=>{e.stopPropagation(), handleDelete()}}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

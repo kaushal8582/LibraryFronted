@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import toast from "react-hot-toast";
 
 type LoginFormInputs = {
   email: string;
@@ -41,7 +42,6 @@ export default function LoginPage() {
     (state: RootState) => state.auth
   );
 
-  console.log("librariessss",libraries);
   
   const { 
     register, 
@@ -99,6 +99,10 @@ export default function LoginPage() {
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async(data) => {
     console.log("Login data:", data);
+    if(data.role === "student" && !data.libraryId){
+      toast.error("Please Select Your Library");
+      return;
+    }
 
     // Prepare login data based on role
     const loginData = {

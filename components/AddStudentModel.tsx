@@ -18,6 +18,8 @@ import { AppDispatch } from "@/lib/store";
 import { addStudent } from "@/lib/slices/studentsSlice";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { Plus } from 'lucide-react';
+import { useMediaQuery } from "@/common/useMediaQuery";
 
 const createStudentSchema = Joi.object({
   name: Joi.string().required().min(2).max(100).label("Name"),
@@ -32,6 +34,7 @@ const createStudentSchema = Joi.object({
 
 export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void}) {
   const [open, setOpen] = useState(false); 
+  const isMobile  = useMediaQuery('(max-width:600px)');
 
   const {
     register,
@@ -68,9 +71,11 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        Add Student
-      </Button>
+      
+        <Button className="flex items-center justify-center" variant="outline" onClick={() => setOpen(true)}>
+           {isMobile ? <Plus className="inline-block w-4 h-4 " />:"Add Student"}
+        </Button>
+      
 
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
