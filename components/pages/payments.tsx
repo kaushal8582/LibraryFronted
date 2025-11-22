@@ -1,30 +1,37 @@
-"use client"
+"use client";
 
-import { useSelector, useDispatch } from "react-redux"
-import type { RootState, AppDispatch } from "@/lib/store"
-
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Download, Filter, ChevronLeft, ChevronRight } from "lucide-react"
-import { useEffect } from "react"
-import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice"
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "@/lib/store";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Download, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice";
 
 export function Payments() {
-  const dispatch = useDispatch<AppDispatch>()
-  const { libraryPayments  } = useSelector((state: RootState) => state.payments)
-  const { userFullData,  } = useSelector((state: RootState) => state.auth)
+  const dispatch = useDispatch<AppDispatch>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-  // const startIndex = (currentPage - 1) * itemsPerPage
-  // const endIndex = startIndex + itemsPerPage
-  // const paginatedPayments = payments.slice(startIndex, endIndex)
-  // const totalPages = Math.ceil(payments.length / itemsPerPage)
+  const { libraryPayments, TotalInPagination } = useSelector(
+    (state: RootState) => state.payments
+  );
+  const { userFullData } = useSelector((state: RootState) => state.auth);
 
-  useEffect(()=>{
-    if(!userFullData?.libraryId) return
-    dispatch(getPaymentsByLibrary(userFullData?.libraryId!))
-  },[userFullData?.libraryId])
+  // Total pages
+  const totalPages = Math.ceil(TotalInPagination / limit);
 
+  useEffect(() => {
+    if (!userFullData?.libraryId) return;
 
+    dispatch(
+      getPaymentsByLibrary({
+        libraryId: userFullData.libraryId,
+        page: currentPage,
+        limit: limit,
+      })
+    );
+  }, [userFullData?.libraryId, currentPage]);
 
   return (
     <div>
@@ -35,7 +42,7 @@ export function Payments() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <select
-              value={'Last 30 Days'}
+              value={"Last 30 Days"}
               onChange={(e) => console.log(e.target.value)}
               className="px-4 py-2 rounded-lg bg-card border border-border text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
             >
@@ -44,10 +51,12 @@ export function Payments() {
               <option>Last 90 Days</option>
               <option>This Year</option>
             </select>
+
             <Button variant="outline" className="flex items-center gap-2 bg-transparent">
               <Filter className="w-4 h-4" />
             </Button>
           </div>
+
           <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
             <Download className="w-4 h-4" />
             Download Report
@@ -76,19 +85,29 @@ export function Payments() {
                 </th>
               </tr>
             </thead>
+
             <tbody>
               {libraryPayments.map((payment) => (
-                <tr key={payment._id} className="border-b border-border hover:bg-secondary/50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-foreground">{payment.user.name}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-foreground">${payment.amount.toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{payment.razorpayPaymentId}</td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{new Date(payment.paymentDate).toLocaleDateString()}</td>
+                <tr
+                  key={payment._id}
+                  className="border-b border-border hover:bg-secondary/50 transition-colors"
+                >
+                  <td className="px-6 py-4 text-sm font-medium">{payment.user.name}</td>
+                  <td className="px-6 py-4 text-sm font-medium">
+                    ₹{payment.amount.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
+                    {payment.razorpayPaymentId}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
+                    {new Date(payment.paymentDate).toLocaleDateString()}
+                  </td>
                   <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
                         payment.status === "completed"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
                       {payment.status}
@@ -100,33 +119,36 @@ export function Payments() {
           </table>
 
           {/* Pagination */}
-          {/* <div className="px-6 py-4 border-t border-border flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-border flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, payments.length)} of {payments.length} results
+              Showing {(currentPage - 1) * limit + 1} –
+              {/* {Math.min(currentPage * limit, TotalInPagination)} of {TotalInPagination} */} 
             </span>
+
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                onClick={() => dispatch(setCurrentPage(Math.max(1, currentPage - 1)))}
                 disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
                 className="flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous
               </Button>
+
               <Button
                 variant="outline"
-                onClick={() => dispatch(setCurrentPage(Math.min(totalPages, currentPage + 1)))}
                 disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
                 className="flex items-center gap-2"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

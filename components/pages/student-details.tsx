@@ -161,10 +161,10 @@ const StudentDetails = ({ studentId }: { studentId: string }) => {
 
       {/* Tabs Section */}
       <Tabs defaultValue="payments" className="w-full">
-        <TabsList className="mb-4">
+        {/* <TabsList className="mb-4">
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="reminders">Reminders</TabsTrigger>
-        </TabsList>
+        </TabsList> */}
 
         {/* Payment History Tab */}
         <TabsContent value="payments">

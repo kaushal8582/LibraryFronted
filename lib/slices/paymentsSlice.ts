@@ -62,6 +62,7 @@ interface PaymentState {
   totalPending: number;
   totalAmount: number;
   libraryPayments: PaymentRecord[];
+  TotalInPagination : number;
 }
 
 // ─────────────────────────────────────────────
@@ -77,6 +78,7 @@ const initialState: PaymentState = {
   totalPending: 0,
   totalAmount: 0,
   libraryPayments: [],
+  TotalInPagination: 0,
 };
 
 
@@ -98,11 +100,12 @@ export const getPaymentsByStudent = createAsyncThunk(
 
 export const getPaymentsByLibrary = createAsyncThunk(
   "payments/getByLibrary",
-  async (libraryId: string, { rejectWithValue }) => {
+  async ({ libraryId, page, limit }: { libraryId: string; page: number; limit: number }, { rejectWithValue }) => {
     try {
       const res: any = await apiCaller({
         method: "GET",
         url: `/payments/library/${libraryId}`,
+        params: { page, limit },
       });
       return res.data; 
     } catch (error: any) {
@@ -181,7 +184,8 @@ const paymentsSlice = createSlice({
       })
       .addCase(getPaymentsByLibrary.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.libraryPayments = action.payload || [];
+        state.libraryPayments = action.payload.payments || [];
+        state.TotalInPagination = action.payload.totalPayments || 0;
       })
       .addCase(getPaymentsByLibrary.rejected, (state, action) => {
         state.isLoading = false;
