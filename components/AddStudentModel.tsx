@@ -88,7 +88,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Name */}
           <div className="flex flex-col gap-3 ">
-            <Label className="mx-1" htmlFor="name">Name</Label>
+            <Label  htmlFor="name">Name</Label>
             <Input id="name" placeholder="Enter name" {...register("name")} />
             {errors.name && (
               <p className="text-red-500 text-sm">
@@ -99,7 +99,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
 
           {/* Email */}
           <div className="flex flex-col gap-2 ">
-            <Label className="mx-1" htmlFor="email">Email</Label>
+            <Label  htmlFor="email">Email</Label>
             <Input id="email" placeholder="Enter email" {...register("email")} />
             {errors.email && (
               <p className="text-red-500 text-sm">
@@ -110,7 +110,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
 
           {/* Phone */}
           <div className="flex flex-col gap-2 ">
-            <Label className="mx-1" htmlFor="phone">Phone No</Label>
+            <Label  htmlFor="phone">Phone No</Label>
             <Input id="phone" placeholder="Enter 10-digit phone" {...register("phone")} />
             {errors.phone && (
               <p className="text-red-500 text-sm">
@@ -124,7 +124,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
 
           <div className="flex items-center  gap-2">
 <div className="flex flex-col gap-2 ">
-            <Label className="mx-1" htmlFor="fee">Fee</Label>
+            <Label  htmlFor="fee">Fee</Label>
             <Input id="fee" placeholder="Enter fee amount" {...register("fee")} />
             {errors.fee && (
               <p className="text-red-500 text-sm">
@@ -136,7 +136,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
 
            {/* Join Date */}
           <div className="flex flex-col gap-2 ">
-            <Label className="mx-1" htmlFor="joinDate">Joining Date</Label>
+            <Label  htmlFor="joinDate">Joining Date</Label>
             <Input id="joinDate" type="date" {...register("joinDate")} />
             {errors.joinDate && (
               <p className="text-red-500 text-sm">
@@ -151,11 +151,11 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
          
 
           {/* Timing */}
-          <div className="flex flex-col gap-2  gap-2">
+          <div className="flex flex-col gap-2 ">
             <Label>Timing</Label>
             <div className="flex gap-2">
               <div className="flex flex-col gap-2  w-1/2">
-                <Label className="mx-1" htmlFor="startTime" className="text-xs text-gray-500">
+                <Label  htmlFor="startTime" className="text-xs text-gray-500">
                   Start Time
                 </Label>
                 <Input type="time" id="startTime" {...register("startTime")} />
@@ -166,7 +166,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
                 )}
               </div>
               <div className="flex flex-col gap-2  w-1/2">
-                <Label className="mx-1" htmlFor="endTime" className="text-xs text-gray-500">
+                <Label  htmlFor="endTime" className="text-xs text-gray-500">
                   End Time
                 </Label>
                 <Input type="time" id="endTime" {...register("endTime")} />
@@ -181,7 +181,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
 
           {/* Address */}
           <div className="flex flex-col gap-2 ">
-            <Label className="mx-1" htmlFor="address">Address</Label>
+            <Label  htmlFor="address">Address</Label>
             <Input id="address" placeholder="Enter address" {...register("address")} />
             {errors.address && (
               <p className="text-red-500 text-sm">
