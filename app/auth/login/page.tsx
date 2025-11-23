@@ -174,7 +174,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600"
+                className="absolute inset-y-0 right-0 top-5 cursor-pointer flex items-center px-3 text-gray-600"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
