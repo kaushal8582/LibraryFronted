@@ -4,24 +4,38 @@ import toast from "react-hot-toast";
 
 // ✅ Create Axios instance with some defaults
 const axiosInstance = axios.create({
-  baseURL:  "http://localhost:5002/api",
+  baseURL:  "https://librarybackend-ke0y.onrender.com/api",
   timeout: 15000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
-// ✅ Interceptor for adding token automatically
+
+
+// Dynamically set content type
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
+
+    if (
+      config.data instanceof FormData
+    ) {
+      // ❗IMPORTANT: let axios set correct multipart boundary
+      delete config.headers["Content-Type"];
+    } else {
+      config.headers["Content-Type"] = "application/json";
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
+
 
 // ✅ Interceptor for handling common response errors
 axiosInstance.interceptors.response.use(

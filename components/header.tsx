@@ -15,6 +15,8 @@ export function Header({ title, subtitle }: HeaderProps) {
   const { userFullData } = useSelector((state: RootState) => state.auth);
   const { sidebarOpen } = useSelector((state: RootState) => state.dashboard);
    const dispatch = useDispatch<AppDispatch>();
+
+ 
  
 
   return (
@@ -41,12 +43,16 @@ export function Header({ title, subtitle }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-4 ml-8">
-            <button className="p-2 rounded-lg hover:bg-secondary transition-colors">
+            {/* <button className="p-2 rounded-lg hover:bg-secondary transition-colors">
               <Bell className="w-5 h-5 text-foreground" />
-            </button>
+            </button> */}
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold">
-                JD
+               {userFullData?.avtar ? (
+                <img src={userFullData?.avtar} alt={userFullData?.name} className="w-full h-full rounded-full" />
+               ) : (
+                "JD"
+               )}
               </div>
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-foreground">

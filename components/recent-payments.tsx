@@ -15,13 +15,13 @@ export function RecentPayments({ payments }: RecentPaymentsProps) {
         {payments.map((payment) => (
           <div key={payment._id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
             <div className="flex items-center gap-3">
-              <img src={"/placeholder.svg"} alt={payment?.user?.name || "Student"} className="w-10 h-10 rounded-full" />
+              <img src={payment?.user?.avtar || "/placeholder.svg"} alt={payment?.user?.name || "Student"} className="w-10 h-10 rounded-full" />
               <div>
                 <p className="text-sm font-medium text-foreground">{payment?.user?.name || "Student"}</p>
                 <p className="text-xs text-muted-foreground">{new Date(payment.paymentDate).toLocaleDateString()}</p>
               </div>
             </div>
-            <p className="font-semibold text-foreground">${payment.amount.toFixed(2)}</p>
+            <p className="font-semibold text-foreground">₹{payment.amount.toFixed(2)}</p>
           </div>
         ))}
       </div>

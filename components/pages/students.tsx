@@ -122,7 +122,7 @@ export function Students() {
                   <TableCell>
                     {formatMongoDate(student?.joinDate || "")}
                   </TableCell>
-                  <TableCell>${student.fee} / mo</TableCell>
+                  <TableCell>₹{student.fee} / mo</TableCell>
                   <TableCell>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${

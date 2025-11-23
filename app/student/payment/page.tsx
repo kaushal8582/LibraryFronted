@@ -139,7 +139,7 @@ export default function StudentPayment() {
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-        <div className=" space-y-6 max-w-4xl mx-auto">
+        <div className=" space-y-6  mx-auto">
           {/* <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Make Payment</h1>

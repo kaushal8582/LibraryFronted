@@ -32,6 +32,7 @@ interface UserFullData {
   _id: string;
   name: string;
   email: string;
+  avtar : string;
   role: "librarian" | "admin" | "student" | string;
   phone: string;
   libraryId: string;

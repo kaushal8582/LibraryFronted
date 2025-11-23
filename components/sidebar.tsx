@@ -106,12 +106,13 @@ const isOnValidRoute =
 
   return (
     <div
-      className={` md:flex w-64 border-r border-border bg-sidebar p-6 flex-col ${
-        sidebarOpen
-          ? "block absolute top-0 left-0 h-screen z-[999999]"
-          : "hidden"
-      }`}
-    >
+  className={` md:flex w-64 border-r border-border bg-sidebar p-6 flex-col ${
+    sidebarOpen
+      ? "block absolute top-0 left-0 h-screen z-[999999]"
+      : "hidden relative"
+  }`}
+>
+
       {/* ---- Logo Section ---- */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3 ">
@@ -175,9 +176,10 @@ const isOnValidRoute =
 
       {/* ---- Logout Button ---- */}
       <button
-        className="flex items-center gap-3 w-full px-4 py-2 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+        className=" absolute bottom-6 flex items-center gap-3 w-[calc(100%-50px)] px-4 py-2 rounded-lg text-sidebar-foreground hover:bg-red-400 cursor-pointer bg-red-600 text-white transition-colors"
         onClick={() => {
           localStorage.removeItem("accessToken");
+          localStorage.clear();
           router.push("/auth/login");
         }}
       >

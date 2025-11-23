@@ -1,44 +1,51 @@
-"use client"
+"use client";
 
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "@/lib/store"
-import { Header } from "@/components/header"
-import { StatCard } from "@/components/stat-card"
-import { RevenueChart } from "@/components/revenue-chart"
-import { RecentPayments } from "@/components/recent-payments"
-import { TrendingUp } from "lucide-react"
-import { useEffect } from "react"
-import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice"
-import { fetchLibraryAnalytics, fetchLibrarySummary } from "@/lib/slices/dashboardSlice"
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/lib/store";
+import { Header } from "@/components/header";
+import { StatCard } from "@/components/stat-card";
+import { RevenueChart } from "@/components/revenue-chart";
+import { RecentPayments } from "@/components/recent-payments";
+import { TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice";
+import {
+  fetchLibraryAnalytics,
+  fetchLibrarySummary,
+} from "@/lib/slices/dashboardSlice";
+import MonthPicker from "../MonthSelector";
 
 export function Dashboard() {
-  const { analytics,summary } = useSelector(
-    (state: RootState) => state.dashboard,
-  )
-  const { libraryPayments } = useSelector(
-    (state: RootState) => state.payments,
-  )
-  const { userFullData } = useSelector(
-    (state: RootState) => state.auth,
-  )
+  const { analytics, summary } = useSelector(
+    (state: RootState) => state.dashboard
+  );
+  const { libraryPayments } = useSelector((state: RootState) => state.payments);
+  const { userFullData } = useSelector((state: RootState) => state.auth);
+  const [month,setMonth] = useState<any>(null)
 
   const dispatch = useDispatch<AppDispatch>();
 
-   useEffect(()=>{
-    if(!userFullData?.libraryId) return
-    dispatch(getPaymentsByLibrary(userFullData?.libraryId!))
+  useEffect(() => {
+    if (!userFullData?.libraryId) return;
+    dispatch(getPaymentsByLibrary({ libraryId: userFullData?.libraryId!,page:1,limit : 10 }));
 
-    dispatch(fetchLibrarySummary(userFullData?.libraryId!))
-    dispatch(fetchLibraryAnalytics({libraryId:userFullData?.libraryId!}))
-
-
-  },[userFullData?.libraryId])
-
-
+    dispatch(fetchLibrarySummary({ libraryId: userFullData?.libraryId!,month }));
+    dispatch(fetchLibraryAnalytics({ libraryId: userFullData?.libraryId! }));
+  }, [userFullData?.libraryId,month]);
 
   return (
     <div>
       <Header title="Dashboard" subtitle="Last 30 Days" />
+      <div className="flex items-center justify-start gap-2 pt-3 pl-8" >
+
+      <h3>Select Month</h3>
+
+        <MonthPicker
+          onChange={(value) => {
+           setMonth(value)
+          }}
+        />
+      </div>
 
       <div className="p-8 space-y-8">
         {/* Stats Grid */}
@@ -72,5 +79,5 @@ export function Dashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

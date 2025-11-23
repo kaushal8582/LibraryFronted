@@ -71,11 +71,12 @@ const initialState: DashboardState = {
 // 📊 Get summary for library dashboard
 export const fetchLibrarySummary = createAsyncThunk(
   "dashboard/fetchLibrarySummary",
-  async (libraryId: string, { rejectWithValue }) => {
+  async ({ libraryId, month }: { libraryId: string; month?: string }, { rejectWithValue }) => {
     try {
       const response = await apiCaller<{ data: LibrarySummary }>({
         method: "GET",
         url: `/dashboard/library/${libraryId}/summary`,
+        params: month ? { month } : {},
       });
       return response.data;
     } catch (error: any) {

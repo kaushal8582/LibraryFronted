@@ -48,6 +48,7 @@ export interface PaymentRecord {
     name: string;
     email: string;
     phone: string;
+    avtar : string;
   };
 }
 
@@ -100,12 +101,12 @@ export const getPaymentsByStudent = createAsyncThunk(
 
 export const getPaymentsByLibrary = createAsyncThunk(
   "payments/getByLibrary",
-  async ({ libraryId, page, limit }: { libraryId: string; page: number; limit: number }, { rejectWithValue }) => {
+  async ({ libraryId, page, limit,lastDays }: { libraryId: string; page: number; limit: number,lastDays?: number }, { rejectWithValue }) => {
     try {
       const res: any = await apiCaller({
         method: "GET",
         url: `/payments/library/${libraryId}`,
-        params: { page, limit },
+        params: { page, limit,lastDays },
       });
       return res.data; 
     } catch (error: any) {

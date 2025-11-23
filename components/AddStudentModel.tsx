@@ -155,7 +155,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
             <Label>Timing</Label>
             <div className="flex gap-2">
               <div className="flex flex-col gap-2  w-1/2">
-                <Label  htmlFor="startTime" className="text-xs text-gray-500">
+                <Label  htmlFor="startTime" className="text-xs mx-1 text-gray-500">
                   Start Time
                 </Label>
                 <Input type="time" id="startTime" {...register("startTime")} />
@@ -166,7 +166,7 @@ export function AddStudentModel({setIsAction}:{setIsAction:(value:boolean)=>void
                 )}
               </div>
               <div className="flex flex-col gap-2  w-1/2">
-                <Label  htmlFor="endTime" className="text-xs text-gray-500">
+                <Label  htmlFor="endTime" className="text-xs mx-1 text-gray-500">
                   End Time
                 </Label>
                 <Input type="time" id="endTime" {...register("endTime")} />

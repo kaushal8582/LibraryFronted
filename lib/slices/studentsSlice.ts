@@ -99,7 +99,7 @@ export const addStudent = createAsyncThunk(
 export const editStudent = createAsyncThunk(
   "students/edit",
   async (
-    { id, updates }: { id: string; updates: Partial<Student> },
+    { id, updates }: { id: string; updates: Partial<any> },
     { rejectWithValue }
   ) => {
     try {

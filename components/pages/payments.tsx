@@ -7,16 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Download, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice";
+import { useMediaQuery } from "@/common/useMediaQuery";
 
 export function Payments() {
   const dispatch = useDispatch<AppDispatch>();
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [lastDays, setLastDays] = useState(30);
+   const isMobile = useMediaQuery("(max-width:600px)");
 
   const { libraryPayments, TotalInPagination } = useSelector(
     (state: RootState) => state.payments
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
+
+
 
   // Total pages
   const totalPages = Math.ceil(TotalInPagination / limit);
@@ -29,9 +34,10 @@ export function Payments() {
         libraryId: userFullData.libraryId,
         page: currentPage,
         limit: limit,
+        lastDays : lastDays,
       })
     );
-  }, [userFullData?.libraryId, currentPage]);
+  }, [userFullData?.libraryId, currentPage, limit, lastDays]);
 
   return (
     <div>
@@ -42,24 +48,25 @@ export function Payments() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <select
-              value={"Last 30 Days"}
-              onChange={(e) => console.log(e.target.value)}
+              value={lastDays}
+              onChange={(e) => setLastDays(Number(e.target.value))}
               className="px-4 py-2 rounded-lg bg-card border border-border text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option>Last 30 Days</option>
-              <option>Last 60 Days</option>
-              <option>Last 90 Days</option>
-              <option>This Year</option>
+              <option value={30}>Last 30 Days</option>
+              <option value={60}>Last 60 Days</option>
+              <option value={90}>Last 90 Days</option>
+              <option value={365}>This Year</option>
             </select>
 
-            <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+            {/* <Button variant="outline" className="flex items-center gap-2 bg-transparent">
               <Filter className="w-4 h-4" />
-            </Button>
+            </Button> */}
           </div>
 
-          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+          <Button disabled={true} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
             <Download className="w-4 h-4" />
-            Download Report
+            {!isMobile && "Download Report"}
+            
           </Button>
         </div>
 

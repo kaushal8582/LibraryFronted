@@ -67,6 +67,7 @@ export function Reminders() {
                     </div>
                   </div>
                   <button
+                  disabled={true}
                     onClick={() => dispatch(toggleSmsReminders())}
                     className={`w-12 h-6 rounded-full transition-colors ${
                       settings.smsReminders ? "bg-blue-600" : "bg-gray-300"
@@ -80,7 +81,7 @@ export function Reminders() {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
+                <div  className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900">
                       <MessageCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -91,6 +92,7 @@ export function Reminders() {
                     </div>
                   </div>
                   <button
+                  disabled={true}
                     onClick={() => dispatch(toggleWhatsappReminders())}
                     className={`w-12 h-6 rounded-full transition-colors ${
                       settings.whatsappReminders ? "bg-blue-600" : "bg-gray-300"
@@ -111,8 +113,9 @@ export function Reminders() {
               <h3 className="text-lg font-semibold text-foreground mb-6">Frequency & Timing</h3>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Send Reminders</label>
+                  <label  className="block text-sm font-medium text-foreground mb-2">Send Reminders</label>
                   <select
+                  disabled={true}
                     value={settings.frequency}
                     onChange={(e) => dispatch(setFrequency(e.target.value))}
                     className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
@@ -125,6 +128,7 @@ export function Reminders() {
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Timing</label>
                   <select
+                  disabled={true}
                     value={settings.timing}
                     onChange={(e) => dispatch(setTiming(e.target.value))}
                     className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
