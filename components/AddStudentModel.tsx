@@ -92,7 +92,17 @@ export function AddStudentModel({
         {isMobile ? <Plus className="inline-block w-4 h-4 " /> : "Add Student"}
       </Button>
 
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent
+        className="
+    sm:max-w-[450px]
+    w-[95vw]
+    max-h-[90vh]
+    overflow-y-auto
+    sm:rounded-xl
+    rounded-t-2xl
+    p-4
+  "
+      >
         <DialogHeader>
           <DialogTitle>Add Student</DialogTitle>
           <DialogDescription>
@@ -221,7 +231,11 @@ export function AddStudentModel({
           </div>
 
           <DialogFooter>
-            <Button type="submit" isLoading={isLoading} className="w-full bg-[#165dfc] text-white">
+            <Button
+              type="submit"
+              isLoading={isLoading}
+              className="w-full bg-[#165dfc] text-white"
+            >
               Save Student
             </Button>
           </DialogFooter>
