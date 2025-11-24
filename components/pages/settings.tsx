@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/lib/store";
 
@@ -24,9 +24,21 @@ export function Settings() {
     contactPhone: userFullData?.libraryData?.contactPhone || "",
   });
 
+  useEffect(() => {
+    setAccountInfo({
+      name: userFullData?.libraryData?.name || "",
+      contactEmail: userFullData?.libraryData?.contactEmail || "",
+      address: userFullData?.libraryData?.address || "",
+      contactPhone: userFullData?.libraryData?.contactPhone || "",
+    });
+  }, [userFullData]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleUpdateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const response = await dispatch(
         updateAccount({
           libraryId: userFullData?.libraryId || "",
@@ -34,10 +46,11 @@ export function Settings() {
         })
       );
       if (response.meta.requestStatus === "fulfilled") {
-        console.log(response.payload);
+        setIsLoading(false);
         toast.success("Account updated successfully");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Failed to update account:", error);
     }
   };
@@ -75,7 +88,7 @@ export function Settings() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 API Key
@@ -122,15 +135,17 @@ export function Settings() {
           </p>
 
           <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Library Name
                 </label>
                 <input
                   type="text"
-                  value={userFullData?.libraryData?.name || ""}
-                  onChange={(e) => setAccountInfo({ ...accountInfo, name: e.target.value })}
+                  value={accountInfo?.name}
+                  onChange={(e) =>
+                    setAccountInfo({ ...accountInfo, name: e.target.value })
+                  }
                   className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -140,8 +155,13 @@ export function Settings() {
                 </label>
                 <input
                   type="email"
-                  value={userFullData?.libraryData?.contactEmail}
-                  onChange={(e) => setAccountInfo({ ...accountInfo, contactEmail: e.target.value })}
+                  value={accountInfo?.contactEmail}
+                  onChange={(e) =>
+                    setAccountInfo({
+                      ...accountInfo,
+                      contactEmail: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -151,7 +171,7 @@ export function Settings() {
                 </label>
                 <input
                   type="tel"
-                  value={userFullData?.libraryData?.contactPhone}
+                  value={accountInfo?.contactPhone}
                   onChange={(e) =>
                     setAccountInfo({
                       ...accountInfo,
@@ -168,14 +188,17 @@ export function Settings() {
                 Address
               </label>
               <textarea
-                value={userFullData?.libraryData?.address}
-                onChange={(e) => setAccountInfo({ ...accountInfo, address: e.target.value })}
+                value={accountInfo.address}
+                onChange={(e) =>
+                  setAccountInfo({ ...accountInfo, address: e.target.value })
+                }
                 rows={4}
                 className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
             <Button
+              isLoading={isLoading}
               onClick={(e) => {
                 handleUpdateAccount(e);
               }}
@@ -187,7 +210,7 @@ export function Settings() {
         </div>
 
         {/* Pro Plan */}
-        <div className="bg-card rounded-lg border border-border p-6">
+        {/* <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
@@ -211,7 +234,7 @@ export function Settings() {
               </Button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

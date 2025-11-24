@@ -45,7 +45,13 @@ const editStudentSchema = Joi.object({
   endTime: Joi.string().optional().label("End Time"),
 });
 
-export function EditStudentModel({ student, setIsAction }: { student: any; setIsAction: (isAction: boolean) => void }) {
+export function EditStudentModel({
+  student,
+  setIsAction,
+}: {
+  student: any;
+  setIsAction: (isAction: boolean) => void;
+}) {
   const {
     register,
     handleSubmit,
@@ -68,12 +74,11 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
     },
   });
 
-  
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-
-  const onSubmit = async(data: any) => {
+  const onSubmit = async (data: any) => {
     const payload = {
       ...data,
       timing:
@@ -84,27 +89,48 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
     delete payload.startTime;
     delete payload.endTime;
 
-  const res = await  dispatch(editStudent({ id: student._id, updates: payload }));
+    try {
+      setIsLoading(true);
+      const res = await dispatch(
+        editStudent({ id: student._id, updates: payload })
+      );
 
-    if (res.meta.requestStatus === "fulfilled") {
-      toast.success("Student updated successfully");
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Student updated successfully");
+        setIsLoading(false);
+        reset(payload);
+        setOpen(false);
+        setIsAction(true);
+      } else {
+        toast.error("Failed to update student");
+        setIsLoading(false);
+      }
+
+      console.log("📝 Updated Student Data:", payload);
       reset(payload);
-       setOpen(false); 
-      setIsAction(true);
-    } else {
-      toast.error( "Failed to update student");
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Failed to update student");
+    } finally {
+      setIsLoading(false);
     }
-
-    console.log("📝 Updated Student Data:", payload);
-    reset(payload);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={(e)=>e.stopPropagation()} className="h-10 px-4 text-sm w-full " variant="ghost">Edit Student</Button>
+        <Button
+          onClick={(e) => e.stopPropagation()}
+          className="h-10 px-4 text-sm w-full "
+          variant="ghost"
+        >
+          Edit Student
+        </Button>
       </DialogTrigger>
-      <DialogContent onClick={(e)=>e.stopPropagation()} className="sm:max-w-[450px]">
+      <DialogContent
+        onClick={(e) => e.stopPropagation()}
+        className="sm:max-w-[450px]"
+      >
         <DialogHeader>
           <DialogTitle>Edit Student</DialogTitle>
           <DialogDescription>
@@ -114,7 +140,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Name */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" {...register("name")} />
             {errors.name && (
@@ -125,7 +151,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
           </div>
 
           {/* Email */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" {...register("email")} />
             {errors.email && (
@@ -136,7 +162,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
           </div>
 
           {/* Phone */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="phone">Phone</Label>
             <Input id="phone" {...register("phone")} />
             {errors.phone && (
@@ -147,7 +173,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
           </div>
 
           {/* Status */}
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full gap-2">
             <Label htmlFor="status">Status</Label>
             <Select
               value={watch("status")}
@@ -171,7 +197,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
           </div>
 
           {/* Fee */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="fee">Fee</Label>
             <Input id="fee" {...register("fee")} />
             {errors.fee && (
@@ -180,7 +206,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
               </p>
             )}
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="joinDate">Joining Date</Label>
             <Input type="date" id="joinDate" {...register("joinDate")} />
             {errors.joinDate && (
@@ -220,7 +246,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
           </div>
 
           {/* Address */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="address">Address</Label>
             <Input id="address" {...register("address")} />
             {errors.address && (
@@ -231,7 +257,7 @@ export function EditStudentModel({ student, setIsAction }: { student: any; setIs
           </div>
 
           <DialogFooter>
-            <Button type="submit" className="w-full">
+            <Button type="submit" isLoading={isLoading} className="w-full bg-[#165dfc] text-white">
               Save Changes
             </Button>
           </DialogFooter>

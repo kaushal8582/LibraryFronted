@@ -34,6 +34,8 @@ type LoginFormInputs = {
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
+  
   const [selectedRole, setSelectedRole] = useState<"student" | "librarian">("librarian");
   
   const dispatch = useDispatch<AppDispatch>();
@@ -98,35 +100,41 @@ export default function LoginPage() {
   }, [watchedRole]);
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async(data) => {
-    console.log("Login data:", data);
+  
     if(data.role === "student" && !data.libraryId){
       toast.error("Please Select Your Library");
       return;
     }
 
     // Prepare login data based on role
-    const loginData = {
-      email: data.email,
-      password: data.password,
-      role: data.role,
-      ...(data.role === "student" && data.libraryId && { libraryId: data.libraryId })
-    };
-
-    const res:any = await dispatch(loginUser(loginData as any));
-
-    console.log("login response ",res);
-    if(res.meta.requestStatus === "fulfilled"){
-
-     await dispatch(fetchCurrentUser())
-
-      console.log("res.payload?.user?.role",res.payload?.user?.role);
-     
-      if (res.payload?.user?.role === "student") {
-        router.push("/student/dashboard");
-      } else {
-        router.push("/");
-      }
-    }
+   try {
+     setIsLoading(true);
+     const loginData = {
+       email: data.email,
+       password: data.password,
+       role: data.role,
+       ...(data.role === "student" && data.libraryId && { libraryId: data.libraryId })
+     };
+ 
+     const res:any = await dispatch(loginUser(loginData as any));
+ 
+    
+     if(res.meta.requestStatus === "fulfilled"){
+ 
+      await dispatch(fetchCurrentUser())
+ 
+       console.log("res.payload?.user?.role",res.payload?.user?.role);
+      
+       if (res.payload?.user?.role === "student") {
+         router.push("/student/dashboard");
+       } else {
+         router.push("/");
+       }
+     }
+   } catch (error) {
+     setIsLoading(false);
+     console.log("Error in Login :",error);
+   }
   };
 
   return (
@@ -235,13 +243,14 @@ export default function LoginPage() {
             <Button 
               type="submit" 
               className="w-full"
+              isLoading={isLoading}
               disabled={loginMutation.isPending}
             >
               {loginMutation.isPending ? "Logging in..." : "Login"}
             </Button>
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link href="/auth/register" className="text-primary hover:underline">
+              <Link href="/auth/register" className="text-blue-500 font-bold hover:underline">
                 Register
               </Link>
             </div>

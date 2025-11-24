@@ -63,7 +63,7 @@ export function Payments() {
             </Button> */}
           </div>
 
-          <Button disabled={true} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+          <Button disabled={true} className="flex items-center  gap-2 bg-blue-600 hover:bg-blue-700">
             <Download className="w-4 h-4" />
             {!isMobile && "Download Report"}
             

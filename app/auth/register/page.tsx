@@ -37,6 +37,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(false);    
 
   const {
     register,
@@ -67,10 +68,16 @@ export default function RegisterPage() {
   const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
     const { confirmPassword, ...userData } = data;
 
-    const res: any = await dispatch(registerUser(userData));
-    if (res.payload.success) {
-      toast.success("Registration successful!");
-      router.push("/auth/login");
+    try {
+      setIsLoading(true);
+      const res: any = await dispatch(registerUser(userData));
+      if (res.payload.success) {
+        toast.success("Registration successful!");
+        router.push("/auth/login");
+      }
+    } catch (error) {
+      toast.error("Registration failed. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -209,7 +216,7 @@ export default function RegisterPage() {
             </Button>
             <div className="text-center text-sm">
               Already have an account?{" "}
-              <Link href="/auth/login" className="text-primary hover:underline">
+              <Link href="/auth/login" className="text-blue-500 font-bold hover:underline">
                 Login
               </Link>
             </div>

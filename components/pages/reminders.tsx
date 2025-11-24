@@ -111,7 +111,7 @@ export function Reminders() {
             {/* Frequency & Timing */}
             <div className="bg-card rounded-lg border border-border p-6">
               <h3 className="text-lg font-semibold text-foreground mb-6">Frequency & Timing</h3>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label  className="block text-sm font-medium text-foreground mb-2">Send Reminders</label>
                   <select
