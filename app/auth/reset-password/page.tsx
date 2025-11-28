@@ -1,44 +1,76 @@
-'use client'
+"use client";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { resetPassword } from "@/lib/slices/authSlice";
 
 const ForgetPwd = () => {
-   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loader,setLoader] = useState(false);
+  const [password,setPassword] = useState("")
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+   const dispatch = useDispatch<AppDispatch>();
 
-    
 
-    const handleForm = (e:FormEvent<HTMLFormElement>)=>{
-        e.preventDefault();
-        const form = new FormData(e.currentTarget);
-        const data = Object.fromEntries(form.entries());
-        console.log(data)
+  const handelResetPassword = async()=>{
+
+    if(!password || password.trim()==""){
+      toast.error("Password is required")
+      return;
     }
+    try {
+      setLoader(true);
+      const res = await dispatch(resetPassword({token,password}));
+      if(res.meta.requestStatus==="fulfilled"){
+        setLoader(false);
+        setPassword("");
+        toast.success("Password Update Successfully.");
+       window.location.href="/login"
+      }
+    } catch (error) {
+      console.log("Password Update Error ",error);
+    }finally{
+      setLoader(false);
+    }
+  }
+
+  
   return (
-
-
-       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-start">Reset password</CardTitle>
+          <CardTitle className="text-2xl font-bold text-start">
+            Reset password
+          </CardTitle>
           <CardDescription className="">
             Enter your new password to change.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleForm}>
+        <form >
           <CardContent className="space-y-4">
             <div className="relative space-y-2">
-      
               <Input
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
                 id="password"
+                minLength={6}
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-               
               />
               <button
                 type="button"
@@ -47,23 +79,15 @@ const ForgetPwd = () => {
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-               <p className="text-sm text-red-500">errors message</p>
+             
             </div>
 
-
-          
-            <Button className="w-full cursor-pointer">Reset Password</Button>
-           
+            <Button type="button" isLoading={loader} onClick={handelResetPassword} className="w-full cursor-pointer">Reset Password</Button>
           </CardContent>
-
-
-        
-        
         </form>
       </Card>
     </div>
- 
-  )
-}
+  );
+};
 
-export default ForgetPwd
+export default ForgetPwd;

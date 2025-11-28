@@ -65,7 +65,7 @@ function Button({
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
-
+console.log("isloading",isLoading);
   return (
     <Comp
       data-slot="button"
