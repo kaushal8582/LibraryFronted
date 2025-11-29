@@ -40,7 +40,7 @@ const ForgetPwd = () => {
         setLoader(false);
         setPassword("");
         toast.success("Password Update Successfully.");
-       window.location.href="/login"
+       window.location.href="/auth/login"
       }
     } catch (error) {
       console.log("Password Update Error ",error);
