@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -176,7 +177,7 @@ export default function StudentPayment() {
                 new Date().toISOString().split("T")[0] ? (
                 <button
                   onClick={handlePayment}
-                  className="w-[250px] mt-4 bg-gradient-to-r from-blue-500 to-indigo-600 
+                  className="w-[250px] mt-4  from-blue-500 to-indigo-600 
              text-white font-semibold py-2 rounded-lg 
              shadow-md hover:shadow-lg hover:-translate-y-0.5 
              transition-all duration-300 ease-in-out 

@@ -25,12 +25,12 @@ export function Sidebar() {
 
   // Define all routes (base)
   const baseLinks = [
-    { href: "/", label: "Dashboard", icon: LayoutGrid },
-    { href: "/students", label: "Students", icon: Users },
-    { href: "/payments", label: "Payments", icon: CreditCard },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
+    { href: "/dashboard/students", label: "Students", icon: Users },
+    { href: "/dashboard/payments", label: "Payments", icon: CreditCard },
+    { href: "/dashboard/reminders", label: "Reminders", icon: Bell },
+    { href: "/dashboard/settings", label: "Settings", icon: Settings },
 
-    { href: "/reminders", label: "Reminders", icon: Bell },
-    { href: "/settings", label: "Settings", icon: Settings },
     { href: "/student/dashboard", label: "Dashboard", icon: LayoutGrid },
     { href: "/student/payments", label: "Student Payments", icon: CreditCard },
     { href: "/student/payment", label: "Make Payment", icon: Bell },
@@ -49,11 +49,11 @@ export function Sidebar() {
     if (role === "librarian") {
       // librarian has full access except /student
       return [
-        "/",
-        "/students",
-        "/payments",
-        "/reminders",
-        "/settings",
+        "/dashboard",
+        "/dashboard/students",
+        "/dashboard/payments",
+        "/dashboard/reminders",
+        "/dashboard/settings",
       ].includes(link.href);
     }
     if (role === "admin") {
@@ -76,11 +76,11 @@ export function Sidebar() {
       "/student/payment",
     ];
     const validLibrarianRoutes = [
-  "/",
-  "/students",
-  "/payments",
-  "/reminders",
-  "/settings",
+  "/dashboard",
+  "/dashboard/students",
+  "/dashboard/payments",
+  "/dashboard/reminders",
+  "/dashboardsettings",
 ];
 
 const isLibrarianValid =
@@ -98,7 +98,7 @@ const isOnValidRoute =
       if (role === "student") {
         router.push("/student/dashboard");
       } else if (role === "librarian") {
-        router.push("/");
+        router.push("/dashboard");
       }
       // Admin doesn't need redirect, they can access everything
     }
@@ -108,7 +108,7 @@ const isOnValidRoute =
     <div
   className={` md:flex w-64 border-r border-border bg-sidebar p-6 flex-col ${
     sidebarOpen
-      ? "block absolute top-0 left-0 h-screen z-[999999]"
+      ? "block absolute top-0 left-0 h-screen z-50"
       : "hidden relative"
   }`}
 >
@@ -176,7 +176,7 @@ const isOnValidRoute =
 
       {/* ---- Logout Button ---- */}
       <button
-        className=" absolute bottom-6 flex items-center gap-3 w-[calc(100%-50px)] px-4 py-2 rounded-lg text-sidebar-foreground hover:bg-red-400 cursor-pointer bg-red-600 text-white transition-colors"
+        className=" absolute bottom-6 flex items-center gap-3 w-[calc(100%-50px)] px-4 py-2 rounded-lg text-sidebar-foreground hover:bg-red-400 cursor-pointer bg-red-600  transition-colors"
         onClick={() => {
           localStorage.removeItem("accessToken");
           localStorage.clear();

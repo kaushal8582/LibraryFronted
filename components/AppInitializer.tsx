@@ -19,9 +19,17 @@ export default function AppInitializer({ children }: { children: React.ReactNode
       ? localStorage.getItem("accessToken")
       : null;
 
+
+
+      //  add here public paths
+  const publicPath = ['/auth/login',"/auth/register","/auth/forget-pwd","/auth/reset-password","/"];
+
+
   useEffect(() => {
     if (!token) {
-      if (pathname !== "/auth/login" && pathname !== "/auth/register" && pathname !== "/auth/forget-pwd" && pathname !== "/auth/reset-password") {
+
+
+      if (!publicPath.includes(pathname)) {
         router.push("/auth/login");
       }
       return;

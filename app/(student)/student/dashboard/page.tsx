@@ -27,7 +27,7 @@ import { updatePassword } from "@/lib/slices/authSlice";
 import toast from "react-hot-toast";
 import { Header } from "@/components/header";
 import { Pencil } from "lucide-react";
-import StudentModal from "./UpdateStudentModal";
+import StudentModal from "./UpdateStudentModel";
 import { formatMongoDate } from "@/common/commonAction";
 
 export default function StudentDashboard() {
