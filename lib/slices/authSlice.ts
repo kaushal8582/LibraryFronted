@@ -50,6 +50,7 @@ interface UserFullData {
     _id : string;
     nextDueDate : string;
     isPaymentDoneForThisMonth : boolean;
+    avtar : string;
   }
 }
 

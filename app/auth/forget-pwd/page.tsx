@@ -34,7 +34,7 @@ const ForgetPwd = () => {
 
     try {
       setLoader(true);
-
+ 
     const res =  await dispatch(forgotPassword(email));
     if(res.meta.requestStatus=="fulfilled"){
       toast.success("Reset Password Send on email.")

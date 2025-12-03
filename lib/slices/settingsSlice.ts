@@ -8,6 +8,8 @@ export  interface AccountInfo {
   contactEmail: string
   address: string
   contactPhone: string
+  userName : string
+  profileImg: string
 }
 
 interface RazorpayIntegration {
