@@ -40,7 +40,7 @@ const LINKS: LinkInterface[] = [
   {
     id: 4,
     label: "About",
-    href: "/about",
+    href: "/about-us",
     icon: <Info className="w-5 h-5" />
   },
   {

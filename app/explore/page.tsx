@@ -25,8 +25,9 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { Footer } from 'react-day-picker'
+import Footer from '@/components/hero/Footer'
 import Nav from '@/components/hero/Nav'
+import { useRouter } from 'next/navigation'
 
 const libraries = [
   {
@@ -120,6 +121,9 @@ export default function ExplorePage() {
   const [openNow, setOpenNow] = useState(true)
   const [location, setLocation] = useState('')
 
+
+  const router = useRouter()
+
   const filteredLibraries = libraries.filter(library => {
     const matchesSearch = library.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          library.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -157,41 +161,14 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+       <Nav/>
       {/* Header */}
       <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b">
         <div className="container mx-auto">
           <div className="flex items-center justify-between ">
-          <Nav/>
+         
             
-            {/* Mobile Filter Button */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" className="md:hidden">
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filterss
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-md">
-                <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
-                </SheetHeader>
-                <div className="py-6 space-y-6">
-                  <FiltersContent
-                    priceRange={priceRange}
-                    setPriceRange={setPriceRange}
-                    minRating={minRating}
-                    setMinRating={setMinRating}
-                    openNow={openNow}
-                    setOpenNow={setOpenNow}
-                    selectedFacilities={selectedFacilities}
-                    toggleFacility={toggleFacility}
-                    location={location}
-                    setLocation={setLocation}
-                    clearFilters={clearFilters}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
+           
           </div>
 
          
@@ -223,7 +200,9 @@ export default function ExplorePage() {
           <main className="lg:w-3/4">
             {/* Results Header */}
              {/* Search Bar */}
-          <div className="relative">
+          <div className="relative flex items-center justify-between gap-4">
+
+         
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="text"
@@ -232,6 +211,36 @@ export default function ExplorePage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 pr-4 py-6 text-lg rounded-xl border-gray-200 focus-visible:ring-blue-500"
             />
+
+             {/* Mobile Filter Button */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="md:hidden">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filterss
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-md">
+                <SheetHeader>
+                  <SheetTitle>Filters</SheetTitle>
+                </SheetHeader>
+                <div className="py-6 space-y-6">
+                  <FiltersContent
+                    priceRange={priceRange}
+                    setPriceRange={setPriceRange}
+                    minRating={minRating}
+                    setMinRating={setMinRating}
+                    openNow={openNow}
+                    setOpenNow={setOpenNow}
+                    selectedFacilities={selectedFacilities}
+                    toggleFacility={toggleFacility}
+                    location={location}
+                    setLocation={setLocation}
+                    clearFilters={clearFilters}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
             
             <div className="flex items-center justify-between mb-8">
@@ -341,7 +350,7 @@ export default function ExplorePage() {
                           <Users className="w-4 h-4" />
                           <span>{library.seatsAvailable} seats available</span>
                         </div>
-                        <Button className="group-hover:bg-blue-600 transition-colors">
+                        <Button onClick={()=>router.push(`explore/ajdifaysdf`)} className="group-hover:bg-blue-600 transition-colors">
                           View Details
                           <ChevronDown className="w-4 h-4 ml-2 transform group-hover:rotate-90 transition-transform" />
                         </Button>
@@ -356,6 +365,8 @@ export default function ExplorePage() {
       </div>
 
 
+
+<Footer/>
     </div>
   )
 }
