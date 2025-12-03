@@ -3,12 +3,21 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/lib/store";
+import { Pencil, Upload } from "lucide-react";
 
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { AccountInfo, updateAccount } from "@/lib/slices/settingsSlice";
 import toast from "react-hot-toast";
+import { Card } from "../ui/card";
+import LibraryGallery from "../LibraryGalleryImg";
+import HoursSettings from "../SetHours";
+import MembershipPasses from "../MemberShipPasses";
+import WhatYouOffer from "../WhatOffer";
+import HeroImageUploader from "../HeroImageUploader";
+import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
+
 
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,12 +25,18 @@ export function Settings() {
     (state: RootState) => state.settings
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
+  const { isProfilePhotoUploaded } = useSelector((state: RootState) => state.students);
+
+
+
 
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     name: userFullData?.libraryData?.name || "",
     contactEmail: userFullData?.libraryData?.contactEmail || "",
     address: userFullData?.libraryData?.address || "",
     contactPhone: userFullData?.libraryData?.contactPhone || "",
+    userName: userFullData?.name || "",
+    profileImg: userFullData?.avtar || "",
   });
 
   useEffect(() => {
@@ -30,6 +45,8 @@ export function Settings() {
       contactEmail: userFullData?.libraryData?.contactEmail || "",
       address: userFullData?.libraryData?.address || "",
       contactPhone: userFullData?.libraryData?.contactPhone || "",
+      userName: userFullData?.name || "",
+      profileImg: userFullData?.avtar || "",
     });
   }, [userFullData]);
 
@@ -55,6 +72,24 @@ export function Settings() {
     }
   };
 
+  const handelProfileImgUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("img", file);
+   const res =  await dispatch(uploadImageGlobal(formData));
+   if(res.meta.requestStatus === "fulfilled"){
+    console.log("url ", res.payload);
+    setAccountInfo({
+      ...accountInfo,
+      profileImg: res.payload || "",
+    });
+   }
+    
+  };
+
   return (
     <div>
       <Header
@@ -64,7 +99,7 @@ export function Settings() {
 
       <div className="p-8 space-y-8 max-w-4xl">
         {/* Razorpay Integration */}
-        <div className="bg-card rounded-lg border border-border p-6">
+        {/* <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h3 className="text-lg font-semibold text-foreground">
@@ -123,16 +158,61 @@ export function Settings() {
           <Button className="bg-blue-600 hover:bg-blue-700">
             Save Changes
           </Button>
-        </div>
+        </div> */}
+        {/* header img */}
+        <HeroImageUploader />
+        <LibraryGallery />
+        <HoursSettings />
+        <MembershipPasses />
 
         {/* Account Information */}
         <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-6">
-            Account Information
-          </h3>
-          <p className="text-sm text-muted-foreground mb-6">
-            Update your library's details.
-          </p>
+          <div className="flex justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-6">
+                Account Information
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Update your library's details.
+              </p>
+            </div>
+            <Button
+              isLoading={isLoading}
+              onClick={(e) => {
+                handleUpdateAccount(e);
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Update Information
+            </Button>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <div className="relative w-24 h-24">
+              {isProfilePhotoUploaded ? (
+                <div className="w-24 h-24 rounded-full border border-gray-300 flex items-center justify-center bg-gray-100">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <img
+                  src={accountInfo?.profileImg || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                  className="w-24 h-24 rounded-full object-cover border border-gray-300"
+                  alt="avatar"
+                />
+              )}
+
+              {/* Pencil Icon Overlay */}
+              <label className="absolute bottom-1 right-1 w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/90">
+                <Pencil size={14} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handelProfileImgUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
 
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
@@ -181,6 +261,22 @@ export function Settings() {
                   className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={accountInfo?.userName}
+                  onChange={(e) =>
+                    setAccountInfo({
+                      ...accountInfo,
+                      userName: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
             </div>
 
             <div>
@@ -196,18 +292,9 @@ export function Settings() {
                 className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-
-            <Button
-              isLoading={isLoading}
-              onClick={(e) => {
-                handleUpdateAccount(e);
-              }}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Update Information
-            </Button>
           </div>
         </div>
+        <WhatYouOffer />
 
         {/* Pro Plan */}
         {/* <div className="bg-card rounded-lg border border-border p-6">

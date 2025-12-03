@@ -30,6 +30,7 @@ interface StudentState {
   isLoading: boolean;
   error: string | null;
   searchQuery: string;
+  isProfilePhotoUploaded: boolean;
 }
 
 const initialState: StudentState = {
@@ -39,6 +40,7 @@ const initialState: StudentState = {
   isLoading: false,
   error: null,
   searchQuery: "",
+  isProfilePhotoUploaded: false,
 };
 
 //
@@ -109,6 +111,24 @@ export const editStudent = createAsyncThunk(
         data: updates,
       });
       return res.data; // updated student
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update student");
+    }
+  }
+);
+export const uploadImageGlobal = createAsyncThunk(
+  "students/uploadimg",
+  async (
+    formData: FormData,
+    { rejectWithValue }
+  ) => {
+    try {
+      const res: any = await apiCaller({
+        method: "POST",
+        url: `/students/upload/image`,
+        data: formData,
+      });
+      return res.data; 
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to update student");
     }
@@ -218,6 +238,19 @@ const studentsSlice = createSlice({
       })
       .addCase(deleteStudent.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      
+      // ─── Upload Image ───
+      .addCase(uploadImageGlobal.pending, (state) => {
+        state.isProfilePhotoUploaded = true;
+      })
+      .addCase(uploadImageGlobal.fulfilled, (state, action: PayloadAction<any>) => {
+        state.isProfilePhotoUploaded = false;
+        
+      })
+      .addCase(uploadImageGlobal.rejected, (state, action) => {
+        state.isProfilePhotoUploaded = false;
         state.error = action.payload as string;
       });
   },
