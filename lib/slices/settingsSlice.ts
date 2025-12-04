@@ -10,6 +10,8 @@ export  interface AccountInfo {
   contactPhone: string
   userName : string
   profileImg: string
+  heroImage?: string
+
 }
 
 interface RazorpayIntegration {
@@ -63,11 +65,11 @@ export const fetchSettings = createAsyncThunk(
 export const updateAccount = createAsyncThunk(
   "settings/updateAccount",
   async (
-    { libraryId, data }: { libraryId: string; data: AccountInfo | null },
+    { libraryId, data }: { libraryId: string; data: any | null },
     { rejectWithValue }
   ) => {
     try {
-      const response = await apiCaller<{ data: AccountInfo }>({
+      const response = await apiCaller<{ data: any }>({
         method: "PUT",
         url: `/libraries/${libraryId}`,
         data,

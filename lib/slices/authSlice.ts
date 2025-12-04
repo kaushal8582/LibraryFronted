@@ -22,13 +22,25 @@ interface LibraryData {
     };
     reminderFrequency: "daily" | "weekly" | "monthly" | string;
     paymentGateway: "razorpay" | "stripe" | "paypal" | string;
+
   };
   isActive: boolean;
   createdAt: string;
   address : string;
+  heroImg : string;
+  galleryPhotos : string[];
+  openingHours : string;
+  closingHours : string;
+  openForDays : string[];
+  plans :[{
+    hours : string;
+    price : string;
+  }];
+  facilities : string[];
+  
 }
 
-interface UserFullData {
+export interface UserFullData {
   _id: string;
   name: string;
   email: string;
