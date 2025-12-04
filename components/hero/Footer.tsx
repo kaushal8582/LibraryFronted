@@ -171,11 +171,11 @@ const Footer = () => {
 
         {/* Divider */}
         <div className="border-t border-gray-800 mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-center items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 LibTrack. All rights reserved.
+              © {new Date().getFullYear()} LibTrack. All rights reserved.
             </p>
-            <div className="flex gap-6 mt-4 md:mt-0">
+            {/* <div className="flex gap-6 mt-4 md:mt-0">
               <Link href="/sitemap" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Sitemap
               </Link>
@@ -185,7 +185,7 @@ const Footer = () => {
               <Link href="/accessibility" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Accessibility
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
