@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Nav from "@/components/hero/Nav";
 import Footer from "@/components/hero/Footer";
 import {
@@ -16,9 +16,16 @@ import {
   BookOpen,
   Zap,
   Shield,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useDebounce } from "@/common/debounce";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { filterLibraries } from "@/lib/slices/settingsSlice";
+import { truncateText } from "@/common/commonAction";
+import Link from "next/link";
 
 export default function Home() {
   const features = [
@@ -49,6 +56,39 @@ export default function Home() {
     { name: "Campus Study Hub", rating: 4.7, distance: "1.2 mi", seats: 8 },
     { name: "Urban Café Corner", rating: 4.5, distance: "0.8 mi", seats: 6 },
   ];
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { libraries, libraryLoading } = useSelector(
+    (state: RootState) => state.settings
+  );
+
+
+
+  const debounceSearchValue = useDebounce(searchQuery, 500);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const getFilterData = async () => {
+    if (!debounceSearchValue) {
+      return;
+    }
+
+    const payload = {
+      searchText: debounceSearchValue,
+    };
+    try {
+      const res = await dispatch(filterLibraries(payload));
+      if (res.meta.requestStatus === "fulfilled") {
+        console.log("response ", res.payload);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getFilterData();
+  }, [debounceSearchValue]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -95,15 +135,98 @@ export default function Home() {
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       type="text"
-                      placeholder="Search libraries, cafes, or study spots..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by library name, location..."
                       className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
+
                   {/* <Button className=" text-lg h-14 px-8 rounded-xl bg-linear-to-r from-black to-gray-500 hover:from-gray-900 hover:to-600-400 cursor-pointer">
                     <Search className="" />
                     Explore Now
                   </Button> */}
                 </div>
+
+                {searchQuery && (
+                  <div className="mt-5 group p-6 bg-gray-50 rounded-2xl border border-gray-100 transition-all duration-300">
+                    {/* Loader */}
+                    {libraryLoading && (
+                      <div className="flex justify-center py-10">
+                        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                      </div>
+                    )}
+
+                    {/* No Data */}
+                    {!libraryLoading && searchQuery!=="" &&
+                      (!libraries || libraries.length === 0) && (
+                        <div className="py-10 text-center">
+                          <p className="text-gray-600 text-sm">
+                            No libraries found.
+                          </p>
+                          <p className="text-blue-600 font-semibold cursor-pointer mt-1">
+                            Explore Now →
+                          </p>
+                        </div>
+                      )}
+
+                    {/* Data Available */}
+                    {!libraryLoading && libraries && libraries.length > 0 && (
+                      <>
+                        <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-6">
+                          {(libraries?.slice(0, 3) || []).map((lib, index) => (
+                            <div
+                              key={index}
+                              className="w-full hover:border-blue-200 hover:shadow-lg rounded-xl border border-gray-200 shadow-sm overflow-hidden bg-white"
+                            >
+                              {/* Image */}
+                              <div className="h-32 w-full overflow-hidden">
+                                <img
+                                  src={
+                                    lib?.heroImg ||
+                                    "https://via.placeholder.com/300"
+                                  }
+                                  className="w-full h-full object-cover"
+                                  alt={lib?.name}
+                                />
+                              </div>
+
+                              {/* Content */}
+                              <div className="p-3 space-y-1">
+                                <h3 className="font-semibold text-gray-900 text-sm text-left">
+                                  {truncateText(lib?.name || "Library", 30)}
+                                </h3>
+
+                                {/* Rating */}
+                                <div className="flex items-center gap-1">
+                                  {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star
+                                      key={i}
+                                      className={`w-4 h-4 ${
+                                        i < Math.round(lib?.rating || 4)
+                                          ? "text-yellow-500 fill-yellow-500"
+                                          : "text-gray-300"
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* View All */}
+                        <Link
+                          href="/explore"
+                          className="text-sm text-blue-500 underline hover:text-blue-700 transition-colors font-bold cursor-pointer text-left block mt-3"
+                        >
+                          View All
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                )}
+
                 {/* <div className="flex flex-wrap gap-3 justify-center mt-4">
                   <span className="text-sm text-gray-500">Popular:</span>
                   {["Library", "24/7 Access", "Silent Zone", "Group Study", "Free WiFi"].map((tag) => (
@@ -133,7 +256,9 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
               <div className="group p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all duration-300">
-                <h1 className="text-1xl md:text-2xl font-bold text-gray-900 mb-4" >More 📘 For Students – Study Smarter</h1>
+                <h1 className="text-1xl md:text-2xl font-bold text-gray-900 mb-4">
+                  More 📘 For Students – Study Smarter
+                </h1>
                 <ul>
                   <li>🎯 Find the best study spot near you</li>
                   <li>🪑 Check real-time seat availability</li>
@@ -144,11 +269,15 @@ export default function Home() {
                 </ul>
               </div>
               <div className="group p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all duration-300">
-                <h1 className="text-1xl md:text-2xl font-bold text-gray-900 mb-4" >📚 For Librarians – Grow Your Library</h1>
+                <h1 className="text-1xl md:text-2xl font-bold text-gray-900 mb-4">
+                  📚 For Librarians – Grow Your Library
+                </h1>
                 <ul>
                   <li>📈 Manage Your Library online</li>
                   <li>📊 Professionally display your library online</li>
-                  <li>✨ Add photos, facilities, timings, and seating details</li>
+                  <li>
+                    ✨ Add photos, facilities, timings, and seating details
+                  </li>
                   <li>💰 Create flexible membership & hourly plans</li>
                   <li>👥 Attract new students daily</li>
                   <li>⭐ Get verified ratings to build trust</li>

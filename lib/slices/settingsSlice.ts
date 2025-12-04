@@ -31,6 +31,8 @@ interface SettingsState {
   subscription: SubscriptionInfo | null
   isLoading: boolean
   error: string | null
+  libraries: any[] | null
+  libraryLoading: boolean
 }
 
 // ------------------ Initial State ------------------
@@ -41,6 +43,8 @@ const initialState: SettingsState = {
   subscription: null,
   isLoading: false,
   error: null,
+  libraries: null,
+  libraryLoading: false,
 }
 
 // ------------------ Async Thunks ------------------
@@ -121,6 +125,27 @@ export const updateSubscription = createAsyncThunk(
     }
   }
 )
+// Filter Libraries
+export const filterLibraries = createAsyncThunk(
+  "settings/filterLibraries",
+  async (
+    data:any,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "POST",
+        url: `/libraries/filter/libraries`,
+        data,
+      })
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update subscription")
+    }
+  }
+)
+
+
 
 // ------------------ Slice ------------------
 
@@ -163,6 +188,18 @@ const settingsSlice = createSlice({
       // 📌 Update Subscription
       .addCase(updateSubscription.fulfilled, (state, action) => {
         state.subscription = action.payload
+      })
+      // 📌 Filter Libraries
+      .addCase(filterLibraries.fulfilled, (state, action) => {
+        state.libraries = action.payload
+        state.libraryLoading = false
+      })
+      .addCase(filterLibraries.pending, (state) => {
+        state.libraryLoading = true
+      })
+      .addCase(filterLibraries.rejected, (state, action) => {
+        state.libraryLoading = false
+        state.error = action.payload as string
       })
   },
 })
