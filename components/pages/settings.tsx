@@ -26,6 +26,8 @@ export function Settings() {
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
   const { isProfilePhotoUploaded } = useSelector((state: RootState) => state.students);
+  const [isHeroImageUploaded, setIsHeroImageUploaded] = useState(false);
+  const [isGalleryImageUploaded, setIsGalleryImageUploaded] = useState(false);
 
 
 
@@ -65,7 +67,7 @@ export function Settings() {
       if (response.meta.requestStatus === "fulfilled") {
         setIsLoading(false);
         toast.success("Account updated successfully");
-      }
+      } 
     } catch (error) {
       setIsLoading(false);
       console.error("Failed to update account:", error);
@@ -160,10 +162,10 @@ export function Settings() {
           </Button>
         </div> */}
         {/* header img */}
-        <HeroImageUploader />
-        <LibraryGallery />
-        <HoursSettings />
-        <MembershipPasses />
+        <HeroImageUploader value ={userFullData} id={userFullData?.libraryId || ""} />
+        <LibraryGallery value={userFullData} id={userFullData?.libraryId || ""} />
+        <HoursSettings value={userFullData} id={userFullData?.libraryId || ""} />
+        <MembershipPasses value={userFullData}  />
 
         {/* Account Information */}
         <div className="bg-card rounded-lg border border-border p-6">
@@ -294,7 +296,7 @@ export function Settings() {
             </div>
           </div>
         </div>
-        <WhatYouOffer />
+        <WhatYouOffer value ={userFullData} />
 
         {/* Pro Plan */}
         {/* <div className="bg-card rounded-lg border border-border p-6">
