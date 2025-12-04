@@ -80,12 +80,12 @@ export function Sidebar() {
   "/dashboard/students",
   "/dashboard/payments",
   "/dashboard/reminders",
-  "/dashboardsettings",
+  "/dashboard/settings",
 ];
 
 const isLibrarianValid =
   validLibrarianRoutes.includes(pathname) ||
-  pathname.startsWith("/students/"); // <-- allow student details
+  pathname.startsWith("/dashboard/students/"); 
   
 
 const isOnValidRoute =
