@@ -110,7 +110,7 @@ export function Students() {
               {filteredStudents.map((student) => (
                 <TableRow
                   key={student._id}
-                  onClick={() => router.push(`/students/${student.user?._id}`)}
+                  onClick={() => router.push(`/dashboard/students/${student.user?._id}`)}
                   className="cursor-pointer"
                 >
                   <TableCell className="font-medium">

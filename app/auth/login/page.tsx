@@ -128,7 +128,7 @@ export default function LoginPage() {
        if (res.payload?.user?.role === "student") {
          router.push("/student/dashboard");
        } else {
-         router.push("/");
+         router.push("/dashboard");
        }
      }
    } catch (error) {
