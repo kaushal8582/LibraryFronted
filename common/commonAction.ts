@@ -21,3 +21,9 @@ export function capitalizeFirstChar(text: string): string {
   if (!text) return text;
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+
+export function truncateText(text: string, limit: number): string {
+  if (!text) return "";
+  return text.length > limit ? text.slice(0, limit) + "..." : text;
+}
