@@ -13,8 +13,12 @@ import {
   Phone,
   User,
   UserPlus,
-  LogIn
+  LogIn,
+  LayoutDashboard
 } from 'lucide-react'
+import { RootState } from '@/lib/store'
+import { useSelector } from 'react-redux'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 interface LinkInterface {
   id: number,
@@ -53,6 +57,9 @@ const LINKS: LinkInterface[] = [
 
 const Nav = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const { userFullData } = useSelector((state: RootState) => state.auth);
+
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
@@ -97,7 +104,27 @@ const Nav = () => {
        
         </div>
 
-         <div className='space-x-4 max-md:hidden'>
+        {
+          userFullData ? <>
+
+
+          <div className='flex items-center gap-4'>
+
+            <Link href={'/dashboard'} className='hidden md:block'>
+              <Button className='cursor-pointer'>Dashboard</Button>
+            </Link>
+          
+
+
+          <Avatar>
+  <AvatarImage src={userFullData.avtar} />
+  <AvatarFallback>{userFullData.name[0]}</AvatarFallback>
+</Avatar>
+          </div>
+          
+          
+          </> : <>
+             <div className='space-x-4 max-md:hidden'>
             <Button variant={"outline"} className="gap-2">
               <LogIn className="w-4 h-4" />
               Login
@@ -107,6 +134,10 @@ const Nav = () => {
               Sign-up
             </Button>
           </div>
+          </>
+        }
+
+
      
       </nav>
 
@@ -130,7 +161,21 @@ const Nav = () => {
 
 
           <div className="p-4 mt-12">
+
+           
             <ul className="space-y-2">
+
+              <li>
+
+                  <Link
+                    href={'/dashboard'}
+                    onClick={closeSidebar}
+                    className="flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                  >
+                    {<LayoutDashboard size={20}/>}
+                    <span className="font-medium">Dashbaord</span>
+                  </Link>
+              </li>
               {LINKS.map((link) => (
                 <li key={link.id}>
                   <Link
@@ -145,15 +190,20 @@ const Nav = () => {
               ))}
             </ul>
 
-   
-            <div className="mt-8 space-y-4">
+
+
+{
+  !userFullData &&  <>
+  
+  
+    <div className="mt-8 space-y-4">
               <Button
                 variant="outline"
                 className="w-full justify-start gap-3"
                 onClick={closeSidebar}
               >
                 <LogIn className="w-4 h-4" />
-                Login
+                Loginss
               </Button>
               <Button
                 className="w-full justify-start gap-3"
@@ -175,6 +225,12 @@ const Nav = () => {
                 </div>
               </div>
             </div>
+  </>
+
+  
+}
+   
+          
           </div>
         </div>
       </div>

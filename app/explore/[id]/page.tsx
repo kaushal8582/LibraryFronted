@@ -1,6 +1,7 @@
 // app/library/the-grand-library/page.tsx
 "use client";
 
+import GalleryImages from "@/components/GalleryImages";
 import GoogleMap from "@/components/GoogleMap";
 import Footer from "@/components/hero/Footer";
 import Nav from "@/components/hero/Nav";
@@ -162,7 +163,7 @@ export default function LibraryDetailsPage() {
         </div>
       </div>
 
-      <div className="w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-30">
+      <div className="w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 -mt-16 relative z-30">
         {/* Main Content Grid */}
         <div className="space-y-8">
           <div className="lg:col-span-2 space-y-8">
@@ -254,6 +255,34 @@ export default function LibraryDetailsPage() {
               </div>
             </div>
 
+
+              {/* Facilities */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 w-full">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                Facilities & Amenities
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {facilities.map((facility, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all group"
+                  >
+                    <div className="p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                      <div className="text-blue-600">{facility.icon}</div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">
+                        {facility.name}
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        {facility.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
              {/* Pricing Plans */}
                 <div className="bg-white rounded-2xl shadow-xl p-6">
                   <div className="flex items-center gap-3 mb-6">
@@ -323,6 +352,10 @@ export default function LibraryDetailsPage() {
                   </div>
                 </div>
 
+
+                 {/* Gallery */}
+            <GalleryImages/>
+
              {/* Contact & Location */}
                 <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-xl p-6 border border-blue-100">
                   <h3 className="text-xl font-bold text-gray-900 mb-6">
@@ -361,49 +394,7 @@ export default function LibraryDetailsPage() {
 
           
 
-            {/* Gallery */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Gallery</h2>
-                <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
-                  View All
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Main Image */}
-              <div className="mb-6">
-                <div className="aspect-video bg-linear-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <ImageIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600 font-medium">
-                        {galleryImages[selectedImage].alt}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Thumbnails */}
-              <div className="grid grid-cols-6 gap-3">
-                {galleryImages.map((image, index) => (
-                  <button
-                    key={image.id}
-                    onClick={() => setSelectedImage(index)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index
-                        ? "border-blue-500 ring-2 ring-blue-200"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="w-full h-full bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <ImageIcon className="w-6 h-6 text-gray-400" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+           
           </div>
         </div>
 

@@ -82,15 +82,7 @@ const Footer = () => {
                   Explore
                 </Link>
               </li>
-              <li>
-                <Link 
-                  href="/pricing" 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
-                >
-                  <DollarSign className="w-4 h-4" />
-                  Pricing
-                </Link>
-              </li>
+          
               <li>
                 <Link 
                   href="/register" 
@@ -128,15 +120,7 @@ const Footer = () => {
                   Contact
                 </Link>
               </li>
-              <li>
-                <Link 
-                  href="/careers" 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
-                >
-                  <Briefcase className="w-4 h-4" />
-                  Careers
-                </Link>
-              </li>
+            
             </ul>
           </div>
 
@@ -169,23 +153,13 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Divider */}
+
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-center items-center">
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} LibTrack. All rights reserved.
             </p>
-            {/* <div className="flex gap-6 mt-4 md:mt-0">
-              <Link href="/sitemap" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Sitemap
-              </Link>
-              <Link href="/cookies" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Cookie Policy
-              </Link>
-              <Link href="/accessibility" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Accessibility
-              </Link>
-            </div> */}
+   
           </div>
         </div>
       </div>

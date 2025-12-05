@@ -30,7 +30,7 @@ const GoogleMap: FC<GoogleMapInterface> = ({ address = "uttar pradesh" }) => {
 
       <button
         onClick={handleDirections}
-        className="w-full mt-8 cursor-pointer py-3 bg-white text-blue-600 font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+        className="w-full mt-8 cursor-pointer py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
       >
         Get Directions
         <ExternalLink className="w-4 h-4" />
