@@ -19,6 +19,7 @@ import {
 import { RootState } from '@/lib/store'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { useRouter } from 'next/navigation'
 
 interface LinkInterface {
   id: number,
@@ -59,7 +60,7 @@ const Nav = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const { userFullData } = useSelector((state: RootState) => state.auth);
 
-
+const router = useRouter()
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
@@ -165,7 +166,9 @@ const Nav = () => {
            
             <ul className="space-y-2">
 
-              <li>
+
+              {
+                userFullData && <li>
 
                   <Link
                     href={'/dashboard'}
@@ -176,6 +179,9 @@ const Nav = () => {
                     <span className="font-medium">Dashbaord</span>
                   </Link>
               </li>
+              }
+
+             
               {LINKS.map((link) => (
                 <li key={link.id}>
                   <Link
@@ -200,31 +206,21 @@ const Nav = () => {
               <Button
                 variant="outline"
                 className="w-full justify-start gap-3"
-                onClick={closeSidebar}
+                onClick={()=>router.push('/auth/login')}
               >
                 <LogIn className="w-4 h-4" />
-                Loginss
+                Login
               </Button>
               <Button
                 className="w-full justify-start gap-3"
-                onClick={closeSidebar}
+                onClick={()=>router.push('/auth/register')}
               >
                 <UserPlus className="w-4 h-4" />
                 Sign Up
               </Button>
             </div>
 
-            <div className="mt-8 pt-8 border-t">
-              <div className="flex items-center gap-3 p-3">
-                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                  <User className="w-6 h-6 text-gray-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800">Guest User</p>
-                  <p className="text-sm text-gray-500">guest@example.com</p>
-                </div>
-              </div>
-            </div>
+   
   </>
 
   
