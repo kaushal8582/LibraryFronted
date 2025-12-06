@@ -26,8 +26,12 @@ import { AppDispatch, RootState } from "@/lib/store";
 import { filterLibraries } from "@/lib/slices/settingsSlice";
 import { truncateText } from "@/common/commonAction";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+
+  const router = useRouter()
+
   const features = [
     {
       icon: <MapPin className="w-6 h-6" />,
@@ -176,8 +180,9 @@ export default function Home() {
                         <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-6">
                           {(libraries?.slice(0, 3) || []).map((lib, index) => (
                             <div
+                            onClick={()=>router.push(`/explore/${lib._id}`)}
                               key={index}
-                              className="w-full hover:border-blue-200 hover:shadow-lg rounded-xl border border-gray-200 shadow-sm overflow-hidden bg-white"
+                              className="w-full cursor-pointer hover:border-blue-200 hover:shadow-lg rounded-xl border border-gray-200 shadow-sm overflow-hidden bg-white"
                             >
                               {/* Image */}
                               <div className="h-32 w-full overflow-hidden">
