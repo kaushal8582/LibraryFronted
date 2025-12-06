@@ -261,7 +261,7 @@ export default function ExplorePage() {
                 {libraries?.map((library) => (
                   <Card
                     key={library._id}
-                    className=" !pt-0 !pb-0 group overflow-hidden hover:shadow-xl transition-all duration-300 border-gray-200"
+                    className=" pt-0!  group overflow-hidden hover:shadow-xl transition-all duration-300 border-gray-200"
                   >
                     <div className={`${library?.heroImg} h-48 relative`}>
                       <img src={library?.heroImg} alt={library?.name} className="w-full h-full object-cover" />
@@ -338,7 +338,7 @@ export default function ExplorePage() {
                           <span>{library.seatsAvailable} seats available</span>
                         </div> */}
                         <Button
-                          onClick={() => router.push(`explore/ajdifaysdf`)}
+                          onClick={() => router.push(`explore/${library._id}`)}
                           className="group-hover:bg-blue-600 transition-colors"
                         >
                           View Details

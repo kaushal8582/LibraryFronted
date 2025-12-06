@@ -37,7 +37,7 @@ axiosInstance.interceptors.request.use(
 );
 
 
-// ✅ Interceptor for handling common response errors
+//  Interceptor for handling common response errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

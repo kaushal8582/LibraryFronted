@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
@@ -11,31 +12,48 @@ export default function AppInitializer({ children }: { children: React.ReactNode
   const pathname = usePathname();
   const didFetchRef = useRef(false);
 
-  const { userFullData } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { userFullData } = useSelector((state: RootState) => state.auth);
+
   const token =
     typeof window !== "undefined"
       ? localStorage.getItem("accessToken")
       : null;
 
 
+  const publicPaths = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/forget-pwd',
+    '/auth/reset-password',
+    '/',
+    '/explore',
+    '/about-us',
+    '/contact-us'
+  ];
 
-      //  add here public paths
-  const publicPath = ['/auth/login',"/auth/register","/auth/forget-pwd","/auth/reset-password","/"];
 
+  const dynamicPublicPaths = [
+    /^\/explore\/[^/]+$/, 
+  ];
+
+
+  const isPublicPath = (path: string) => {
+    if (publicPaths.includes(path)) return true;
+
+ 
+    return dynamicPublicPaths.some((regex) => regex.test(path));
+  };
 
   useEffect(() => {
     if (!token) {
-
-
-      if (!publicPath.includes(pathname)) {
+      if (!isPublicPath(pathname)) {
         router.push("/auth/login");
       }
       return;
     }
 
     if (didFetchRef.current) return;
+
     if (userFullData && userFullData._id) {
       didFetchRef.current = true;
       return;

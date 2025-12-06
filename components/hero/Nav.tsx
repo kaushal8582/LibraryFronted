@@ -126,11 +126,11 @@ const router = useRouter()
           
           </> : <>
              <div className='space-x-4 max-md:hidden'>
-            <Button variant={"outline"} className="gap-2">
+            <Button onClick={()=>router.push("/auth/login")} variant={"outline"} className="gap-2">
               <LogIn className="w-4 h-4" />
               Login
             </Button>
-            <Button className="gap-2">
+            <Button onClick={()=>router.push("/auth/register")} className="gap-2">
               <UserPlus className="w-4 h-4" />
               Sign-up
             </Button>

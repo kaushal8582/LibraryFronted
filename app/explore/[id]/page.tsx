@@ -5,6 +5,7 @@ import GalleryImages from "@/components/GalleryImages";
 import GoogleMap from "@/components/GoogleMap";
 import Footer from "@/components/hero/Footer";
 import Nav from "@/components/hero/Nav";
+import { AppDispatch, RootState } from "@/lib/store";
 import {
   MapPin,
   Clock,
@@ -29,10 +30,24 @@ import {
   IndianRupee,
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getLibraryById } from "@/lib/slices/settingsSlice";
+
+import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function LibraryDetailsPage() {
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const {id} = useParams();
+
+  const dispatch = useDispatch<AppDispatch>();
+
+      const { libraryDetails, libraryLoading } = useSelector(
+    (state: RootState) => state.settings
+  );
 
   const facilities = [
     {
@@ -113,14 +128,40 @@ export default function LibraryDetailsPage() {
     { id: 6, alt: "Conference Room" },
   ];
 
+
+    const getLibraryDetails = async()=>{
+        
+    try {
+     const res = await dispatch(getLibraryById({id}));
+      if(res.meta.requestStatus === "fulfilled"){
+        console.log("response ",res.payload)
+      }
+    } catch (error) {
+      console.log(error)
+
+    }
+    };
+
+    useEffect(()=>{
+      getLibraryDetails()
+    },[id])
+
+
+
+
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
       <Nav />
-      {/* Hero Section with Library Image */}
+
+
+      {
+        libraryDetails ? (<div>
+
+         {/* Hero Section with Library Image */}
       <div className="relative h-[500px] overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-r from-blue-900/80 to-indigo-900/60 z-10">
           <Image
-            src="/library.jpg"
+            src={ libraryDetails?.heroImg || "library.jpg"}
             alt="Library"
             fill
             className="object-cover"
@@ -133,24 +174,26 @@ export default function LibraryDetailsPage() {
               "radial-linear(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 55%), radial-linear(circle at 75% 75%, rgba(99, 102, 241, 0.1) 0%, transparent 55%)",
           }}
         />
-        <div className="relative z-20 h-full flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative z-20 h-full flex items-center ">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full ">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <span className="text-white/80 text-sm font-medium">
-                Academic Library
+                {libraryDetails?.name}
               </span>
             </div>
             <h1 className="text-5xl font-bold text-white mb-4">
-              The Grand Library
+                {libraryDetails?.name}
+
             </h1>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-white/90" />
                 <span className="text-white/90">
-                  123 Knowledge Street, Academia City
+                {libraryDetails?.address}
+                  
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -199,7 +242,10 @@ export default function LibraryDetailsPage() {
                       <Users className="lg:size-8 text-blue-600" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold text-gray-900">James Dale</h4>
+                      <h4 className="font-bold text-gray-900">
+                {libraryDetails?.ownerName || null}
+
+                      </h4>
                       <p className="text-gray-600 mb-2">
                         Owner & Chief Librarian
                       </p>
@@ -225,16 +271,16 @@ export default function LibraryDetailsPage() {
                   </div>
 
                   <div className="space-y-4">
-                    {openingHours.map((schedule, index) => (
+                    {libraryDetails?.openForDays?.map((e:string, index:number) => (
                       <div
                         key={index}
-                        className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
+                        className="flex justify-between items-center py-0 border-b border-gray-100 last:border-0"
                       >
                         <span className="text-gray-700 font-medium">
-                          {schedule.day}
+                          {e}
                         </span>
                         <span className="text-gray-900 font-semibold">
-                          {schedule.hours}
+                          {libraryDetails?.openingHours}
                         </span>
                       </div>
                     ))}
@@ -248,7 +294,7 @@ export default function LibraryDetailsPage() {
                       </span>
                     </div>
                     <p className="text-sm text-green-600 mt-1">
-                      Closes at 10:00 PM today
+                      Closes at {libraryDetails?.closingHours} PM today
                     </p>
                   </div>
                 </div>
@@ -262,21 +308,19 @@ export default function LibraryDetailsPage() {
                 Facilities & Amenities
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {facilities.map((facility, index) => (
+                {libraryDetails?.facilities?.map((facility:string, index:number) => (
                   <div
                     key={index}
                     className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all group"
                   >
-                    <div className="p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                    {/* <div className="p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
                       <div className="text-blue-600">{facility.icon}</div>
-                    </div>
+                    </div> */}
                     <div>
                       <h4 className="font-semibold text-gray-900">
-                        {facility.name}
+                        {facility}
                       </h4>
-                      <p className="text-sm text-gray-500">
-                        {facility.description}
-                      </p>
+                  
                     </div>
                   </div>
                 ))}
@@ -293,7 +337,7 @@ export default function LibraryDetailsPage() {
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                    {pricingPlans.map((plan, index) => (
+                    {libraryDetails?.plans?.map((plan:any, index:number) => (
                       <div
                         key={index}
                         className={`relative rounded-xl border p-5 transition-all ${
@@ -312,18 +356,26 @@ export default function LibraryDetailsPage() {
 
                         <div className="mb-4">
                           <h4 className="font-bold text-gray-900 text-lg">
-                            {plan.name}
+                            {plan?.name}
                           </h4>
                           <div className="flex items-baseline gap-1">
                             <span className="text-3xl font-bold text-gray-900">
-                              ₹{plan.price}
+                              ₹{plan?.price}
                             </span>
                             <span className="text-gray-500">
-                              {plan.duration}
+                             / Month
                             </span>
                           </div>
                         </div>
 
+                        <div className="flex items-center gap-2 mb-8">
+                              <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                              <span className="text-sm text-gray-700">
+                                {plan?.hours} Hours Access
+                              </span>
+                        </div>
+                      
+{/* 
                         <ul className="space-y-3 mb-6">
                           {plan.features.map((feature, featureIndex) => (
                             <li
@@ -336,16 +388,16 @@ export default function LibraryDetailsPage() {
                               </span>
                             </li>
                           ))}
-                        </ul>
+                        </ul> */}
 
                         <button
                           className={`w-full cursor-pointer py-3 rounded-lg font-semibold transition-all ${
-                            plan.popular
+                            plan?.popular
                               ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
                               : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                           }`}
                         >
-                          {plan.popular ? "Get Started Now" : "Select Plan"}
+                          {plan?.popular ? "Get Started Now" : "Select Plan"}
                         </button>
                       </div>
                     ))}
@@ -354,7 +406,7 @@ export default function LibraryDetailsPage() {
 
 
                  {/* Gallery */}
-            <GalleryImages/>
+            <GalleryImages galleryPhotos={libraryDetails?.galleryPhotos} />
 
              {/* Contact & Location */}
                 <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-xl p-6 border border-blue-100">
@@ -367,29 +419,29 @@ export default function LibraryDetailsPage() {
                       <MapPin className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
                       <div>
                         <p className="font-medium text-gray-900">
-                          123 Knowledge Street
+                        {libraryDetails?.address}
                         </p>
-                        <p className="text-gray-600">Academia City, AC 12345</p>
+                      
                       </div>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-blue-600" />
                       <span className="text-gray-900 font-medium">
-                        (555) 123-4567
+                         {libraryDetails?.contactPhone}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <Mail className="w-5 h-5 text-blue-600" />
                       <span className="text-gray-900 font-medium">
-                        info@grandlibrary.com
+                         {libraryDetails?.contactEmail}
                       </span>
                     </div>
                   </div>
 
                   {/* Map Placeholder */}
-                  <GoogleMap address="kushinagar"/>
+                  <GoogleMap address={libraryDetails?.address}/>
                 </div>
 
           
@@ -400,6 +452,34 @@ export default function LibraryDetailsPage() {
 
     
       </div>
+      </div>) : (
+         <div className="w-full h-[80vh] grid place-content-center">
+
+          <div className="flex items-center justify-center flex-col gap-4">
+              <h2 className="text-xl font-semibold">
+            Library Not found .
+          </h2> 
+
+<Link href={"/explore"}>
+ <Button className="">Back</Button>
+</Link>
+         
+          </div>
+
+       
+
+
+
+        </div>
+      )
+      }
+
+
+
+      
+     
+
+    
 
       <Footer />
     </div>
