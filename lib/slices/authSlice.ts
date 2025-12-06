@@ -27,6 +27,7 @@ interface LibraryData {
   isActive: boolean;
   createdAt: string;
   address : string;
+  aboutLibrary?: string;
   heroImg : string;
   galleryPhotos : string[];
   openingHours : string;
@@ -45,6 +46,7 @@ export interface UserFullData {
   name: string;
   email: string;
   avtar : string;
+  bio?: string;
   role: "librarian" | "admin" | "student" | string;
   phone: string;
   libraryId: string;

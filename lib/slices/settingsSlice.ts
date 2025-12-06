@@ -11,6 +11,8 @@ export interface AccountInfo {
   userName: string;
   profileImg: string;
   heroImage?: string;
+  aboutLibrary?: string;
+  bio?: string;
 }
 
 interface RazorpayIntegration {

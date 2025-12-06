@@ -18,19 +18,17 @@ import WhatYouOffer from "../WhatOffer";
 import HeroImageUploader from "../HeroImageUploader";
 import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
 
-
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
   const { account, razorpay, subscription } = useSelector(
     (state: RootState) => state.settings
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
-  const { isProfilePhotoUploaded } = useSelector((state: RootState) => state.students);
+  const { isProfilePhotoUploaded } = useSelector(
+    (state: RootState) => state.students
+  );
   const [isHeroImageUploaded, setIsHeroImageUploaded] = useState(false);
   const [isGalleryImageUploaded, setIsGalleryImageUploaded] = useState(false);
-
-
-
 
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     name: userFullData?.libraryData?.name || "",
@@ -39,6 +37,8 @@ export function Settings() {
     contactPhone: userFullData?.libraryData?.contactPhone || "",
     userName: userFullData?.name || "",
     profileImg: userFullData?.avtar || "",
+    aboutLibrary: userFullData?.libraryData?.aboutLibrary || "",
+    bio : userFullData?.bio
   });
 
   useEffect(() => {
@@ -49,6 +49,8 @@ export function Settings() {
       contactPhone: userFullData?.libraryData?.contactPhone || "",
       userName: userFullData?.name || "",
       profileImg: userFullData?.avtar || "",
+      aboutLibrary: userFullData?.libraryData?.aboutLibrary || "",
+      bio : userFullData?.bio || "",
     });
   }, [userFullData]);
 
@@ -67,7 +69,7 @@ export function Settings() {
       if (response.meta.requestStatus === "fulfilled") {
         setIsLoading(false);
         toast.success("Account updated successfully");
-      } 
+      }
     } catch (error) {
       setIsLoading(false);
       console.error("Failed to update account:", error);
@@ -81,15 +83,14 @@ export function Settings() {
     if (!file) return;
     const formData = new FormData();
     formData.append("img", file);
-   const res =  await dispatch(uploadImageGlobal(formData));
-   if(res.meta.requestStatus === "fulfilled"){
-    console.log("url ", res.payload);
-    setAccountInfo({
-      ...accountInfo,
-      profileImg: res.payload || "",
-    });
-   }
-    
+    const res = await dispatch(uploadImageGlobal(formData));
+    if (res.meta.requestStatus === "fulfilled") {
+      console.log("url ", res.payload);
+      setAccountInfo({
+        ...accountInfo,
+        profileImg: res.payload || "",
+      });
+    }
   };
 
   return (
@@ -162,10 +163,19 @@ export function Settings() {
           </Button>
         </div> */}
         {/* header img */}
-        <HeroImageUploader value ={userFullData} id={userFullData?.libraryId || ""} />
-        <LibraryGallery value={userFullData} id={userFullData?.libraryId || ""} />
-        <HoursSettings value={userFullData} id={userFullData?.libraryId || ""} />
-        <MembershipPasses value={userFullData}  />
+        <HeroImageUploader
+          value={userFullData}
+          id={userFullData?.libraryId || ""}
+        />
+        <LibraryGallery
+          value={userFullData}
+          id={userFullData?.libraryId || ""}
+        />
+        <HoursSettings
+          value={userFullData}
+          id={userFullData?.libraryId || ""}
+        />
+        <MembershipPasses value={userFullData} />
 
         {/* Account Information */}
         <div className="bg-card rounded-lg border border-border p-6">
@@ -197,7 +207,10 @@ export function Settings() {
                 </div>
               ) : (
                 <img
-                  src={accountInfo?.profileImg || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                  src={
+                    accountInfo?.profileImg ||
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                  }
                   className="w-24 h-24 rounded-full object-cover border border-gray-300"
                   alt="avatar"
                 />
@@ -252,6 +265,7 @@ export function Settings() {
                   Contact Phone
                 </label>
                 <input
+                  placeholder="Enter your phone number"
                   type="tel"
                   value={accountInfo?.contactPhone}
                   onChange={(e) =>
@@ -269,6 +283,7 @@ export function Settings() {
                 </label>
                 <input
                   type="text"
+                  placeholder="Enter your name"
                   value={accountInfo?.userName}
                   onChange={(e) =>
                     setAccountInfo({
@@ -280,12 +295,30 @@ export function Settings() {
                 />
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Bio
+              </label>
+              <input
+                type="text"
+                placeholder="Write a short bio about yourself"
+                value={accountInfo?.bio}
+                onChange={(e) =>
+                  setAccountInfo({
+                    ...accountInfo,
+                    bio: e.target.value,
+                  })
+                }
+                className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 Address
               </label>
               <textarea
+                placeholder="Enter your address"
                 value={accountInfo.address}
                 onChange={(e) =>
                   setAccountInfo({ ...accountInfo, address: e.target.value })
@@ -294,9 +327,26 @@ export function Settings() {
                 className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                About Your Library
+              </label>
+              <textarea
+                placeholder="Write a short description about your library"
+                value={accountInfo.aboutLibrary}
+                onChange={(e) =>
+                  setAccountInfo({
+                    ...accountInfo,
+                    aboutLibrary: e.target.value,
+                  })
+                }
+                rows={4}
+                className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
           </div>
         </div>
-        <WhatYouOffer value ={userFullData} />
+        <WhatYouOffer value={userFullData} />
 
         {/* Pro Plan */}
         {/* <div className="bg-card rounded-lg border border-border p-6">
