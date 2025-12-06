@@ -269,12 +269,12 @@ export default function ExplorePage() {
                       <div className="absolute top-4 left-4">
                         <Badge
                           className={
-                            library.openNow
+                            library
                               ? "bg-green-500 hover:bg-green-600"
                               : "bg-red-500 hover:bg-red-600"
                           }
                         >
-                          {library.openNow ? (
+                          {library ? (
                             <>
                               <Clock className="w-3 h-3 mr-1" />
                               Open Now
@@ -289,7 +289,7 @@ export default function ExplorePage() {
                       <div className="absolute top-4 right-4">
                         <Badge variant="secondary" className="gap-1">
                           <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                          {library.rating || 4}
+                          {library?.avgRating || 3}
                         </Badge>
                       </div>
                     </div>
@@ -415,7 +415,7 @@ function FiltersContent({
           />
           <div className="flex justify-between text-sm text-gray-600">
             <span>₹{priceRange[0]}</span>
-            <span>₹{priceRange[1]}</span>
+            <span>₹5000</span>
           </div>
         </div>
       </div>

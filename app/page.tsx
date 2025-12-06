@@ -23,7 +23,7 @@ import Image from "next/image";
 import { useDebounce } from "@/common/debounce";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
-import { filterLibraries } from "@/lib/slices/settingsSlice";
+import { featuredLibraries, filterLibraries } from "@/lib/slices/settingsSlice";
 import { truncateText } from "@/common/commonAction";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -63,10 +63,11 @@ export default function Home() {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { libraries, libraryLoading } = useSelector(
+  const { libraries, libraryLoading ,featuredLibrariesData,featuredLibrariesLoading} = useSelector(
     (state: RootState) => state.settings
   );
 
+  console.log(featuredLibrariesData);
 
 
   const debounceSearchValue = useDebounce(searchQuery, 500);
@@ -89,6 +90,13 @@ export default function Home() {
       console.log(error);
     }
   };
+
+    useEffect(()=>{
+      async function fetchFeaturedLibrariesFun(){
+        await dispatch(featuredLibraries());
+      }
+      fetchFeaturedLibrariesFun();
+    },[])
 
   useEffect(() => {
     getFilterData();
@@ -208,7 +216,7 @@ export default function Home() {
                                     <Star
                                       key={i}
                                       className={`w-4 h-4 ${
-                                        i < Math.round(lib?.rating || 4)
+                                        i < Math.round(lib?.avgRating || 4)
                                           ? "text-yellow-500 fill-yellow-500"
                                           : "text-gray-300"
                                       }`}
@@ -313,16 +321,21 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {popularSpots.map((spot, index) => (
+              {featuredLibrariesData?.map((spot, index) => (
                 <div
                   key={index}
                   className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 group"
                 >
                   <div className="h-48 bg-linear-to-r from-blue-100 to-purple-100 relative">
+                    <img
+                      src={spot.heroImg}
+                      alt={spot.name}
+                      className="w-full h-full object-cover"
+                    />
                     <div className="absolute top-4 right-4">
                       <div className="flex items-center gap-1 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full">
                         <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                        <span className="font-semibold">{spot.rating}</span>
+                        <span className="font-semibold">{spot.avgRating}</span>
                       </div>
                     </div>
                   </div>
@@ -338,7 +351,7 @@ export default function Home() {
                         {/* <Users className="w-4 h-4 text-gray-400" /> */}
                         <span className="text-gray-700">
                           {" "}
-                          Starts At : 199/Month
+                          Starts At : {spot?.minPrice}/Month
                         </span>
                       </div>
                       <div className="flex items-center gap-2">

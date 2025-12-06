@@ -73,7 +73,7 @@ const router = useRouter()
   return (
     <>
 
-      <nav className='w-full h-14 bg-white border-b border-gray-200 shadow flex items-center justify-between sticky top-0 z-50 px-4 md:px-8'>
+      <nav className='w-full h-20 bg-white border-b border-gray-200 shadow flex items-center justify-between sticky top-0 z-50 px-4 md:px-8'>
    
         <div className='flex items-center justify-center gap-4'>
              <button

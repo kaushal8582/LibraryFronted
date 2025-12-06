@@ -34,9 +34,12 @@ interface SettingsState {
   error: string | null;
   libraries: any[] | null;
   libraryLoading: boolean;
-
+  review: any | null;
+  reviewLoading: boolean;
   libraryDetails: any | null;
   libraryDetailsLoading: boolean;
+  featuredLibrariesData: any[] | null;
+  featuredLibrariesLoading: boolean;
 }
 
 // ------------------ Initial State ------------------
@@ -49,9 +52,12 @@ const initialState: SettingsState = {
   error: null,
   libraries: null,
   libraryLoading: false,
-
+  review: null,
+  reviewLoading: false,
   libraryDetails: null,
   libraryDetailsLoading: false,
+  featuredLibrariesData: null,
+  featuredLibrariesLoading: false,
 };
 
 // ------------------ Async Thunks ------------------
@@ -154,11 +160,71 @@ export const filterLibraries = createAsyncThunk(
 // get library details
 export const getLibraryById = createAsyncThunk(
   "settings/libraryDetails",
-  async (data: any, { rejectWithValue }) => {
+  async (data: { id: string; userId: string }, { rejectWithValue }) => {
     try {
       const response = await apiCaller<{ data: any }>({
         method: "GET",
-        url: `/libraries/${data.id}`,
+        url: `/libraries/${data.id}?userId=${data.userId}`,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update subscription");
+    }
+  }
+);
+// get library details
+export const addReview = createAsyncThunk(
+  "settings/addReview",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "POST",
+        url: `/reviews/add`,
+        data,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update subscription");
+    }
+  }
+);
+export const updateReview = createAsyncThunk(
+  "settings/updateReview",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "PUT",
+        url: `/reviews/update`,
+        data,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update subscription");
+    }
+  }
+);
+export const deleteReview = createAsyncThunk(
+  "settings/deleteReview",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "DELETE",
+        url: `/reviews/delete`,
+        data,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update subscription");
+    }
+  }
+);
+export const featuredLibraries = createAsyncThunk(
+  "settings/featuredLibraries",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "GET",
+        url: `/libraries/featured/libraries`,
       });
       return response.data;
     } catch (error: any) {
@@ -234,7 +300,57 @@ const settingsSlice = createSlice({
       .addCase(getLibraryById.rejected, (state, action) => {
         state.libraryDetailsLoading = false; 
         state.error = action.payload as string;
-      });
+      })
+
+      // Add Review
+      .addCase(addReview.fulfilled, (state, action) => {
+        state.reviewLoading = false;
+      })
+      .addCase(addReview.pending, (state) => {
+        state.reviewLoading = true;
+      })
+      .addCase(addReview.rejected, (state, action) => {
+        state.reviewLoading = false;
+        state.error = action.payload as string;
+      })
+      // Update Review
+      .addCase(updateReview.fulfilled, (state, action) => {
+        state.reviewLoading = false;
+      })
+      .addCase(updateReview.pending, (state) => {
+        state.reviewLoading = true;
+      })
+      .addCase(updateReview.rejected, (state, action) => {
+        state.reviewLoading = false;
+        state.error = action.payload as string;
+      })
+      // Delete Review
+      .addCase(deleteReview.fulfilled, (state, action) => {
+
+        state.reviewLoading = false;
+      })
+      .addCase(deleteReview.pending, (state) => {
+        state.reviewLoading = true;
+      })
+      .addCase(deleteReview.rejected, (state, action) => {
+        state.reviewLoading = false;
+        state.error = action.payload as string;
+      })
+
+      // Featured Libraries
+      .addCase(featuredLibraries.fulfilled, (state, action) => {
+        state.featuredLibrariesData = action.payload;
+        state.featuredLibrariesLoading = false;
+      })
+      .addCase(featuredLibraries.pending, (state) => {
+        state.featuredLibrariesLoading = true;
+      })
+      .addCase(featuredLibraries.rejected, (state, action) => {
+        state.featuredLibrariesLoading = false;
+        state.error = action.payload as string;
+      })
+
+
   },
 });
 

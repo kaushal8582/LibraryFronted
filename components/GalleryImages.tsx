@@ -39,7 +39,7 @@ const GalleryImages = ({ galleryPhotos = defaultImages }: GalleryProps) => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Gallery</h2>
         <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
-          View All <ChevronRight className="w-4 h-4" />
+          {/* View All <ChevronRight className="w-4 h-4" /> */}
         </button>
       </div>
 

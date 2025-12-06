@@ -65,13 +65,13 @@ export default function ContactPage() {
       details: "+1 (555) 123-4567",
       description: "Mon-Fri, 9am-6pm PST"
     },
-    {
-      icon: <MapPin className="w-6 h-6" />,
-      title: "Office",
-      details: "123 Innovation Drive",
-      subDetails: "Suite 404, Tech Park, CA 94043",
-      description: "Schedule a visit"
-    }
+    // {
+    //   icon: <MapPin className="w-6 h-6" />,
+    //   title: "Office",
+    //   details: "123 Innovation Drive",
+    //   subDetails: "Suite 404, Tech Park, CA 94043",
+    //   description: "Schedule a visit"
+    // }
   ];
 
   const subjects = [
@@ -265,8 +265,8 @@ export default function ContactPage() {
               ))}
             </div>
 
-            {/* Map/Office Info */}
-            <div className="mt-8 bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
+            
+            {/* <div className="mt-8 bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Visit Our Office</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -285,7 +285,7 @@ export default function ContactPage() {
                 </div>
               </div>
               
-              {/* Map Placeholder */}
+            
               <div className="mt-6 bg-white rounded-xl p-4 shadow-inner">
                 <div className="aspect-video bg-linear-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
                   <div className="text-center">
@@ -295,10 +295,10 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Response Time Info */}
-            <div className="mt-8 p-6 bg-white rounded-2xl shadow-lg border border-blue-100">
+            {/* <div className="mt-8 p-6 bg-white rounded-2xl shadow-lg border border-blue-100">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <CheckCircle className="w-6 h-6 text-green-600" />
@@ -310,12 +310,12 @@ export default function ContactPage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* FAQ Preview */}
-        <div className="mt-16 text-center">
+        {/* <div className="mt-16 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Have Questions?</h3>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
             Check out our FAQ section for quick answers to common questions about LibTrack.
@@ -324,7 +324,7 @@ export default function ContactPage() {
             Visit FAQ Center
             <ArrowRight className="w-4 h-4" />
           </button>
-        </div>
+        </div> */}
       </div>
 
       <Footer/>

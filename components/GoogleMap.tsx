@@ -14,12 +14,12 @@ const GoogleMap: FC<GoogleMapInterface> = ({ address = "uttar pradesh" }) => {
   };
 
   return (
-    <div className="mt-6 rounded-lg overflow-hidden">
+    <div className=" rounded-lg overflow-hidden">
       <div className="mt-6 rounded-lg overflow-hidden">
 
         <iframe
           src={`https://www.google.com/maps?q=${query}&output=embed`}
-          className="w-full h-[350px] md:h-[450px] lg:h-[550px]"
+          className="w-full h-[350px] "
           style={{ border: 0 }}
           allowFullScreen
           loading="lazy"
