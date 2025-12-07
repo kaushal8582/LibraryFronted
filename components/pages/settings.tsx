@@ -8,7 +8,7 @@ import { Pencil, Upload } from "lucide-react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { AccountInfo, updateAccount } from "@/lib/slices/settingsSlice";
+import { AccountInfo, getRazorpayInfo, updateAccount } from "@/lib/slices/settingsSlice";
 import toast from "react-hot-toast";
 import { Card } from "../ui/card";
 import LibraryGallery from "../LibraryGalleryImg";
@@ -20,7 +20,7 @@ import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
 
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
-  const { account, razorpay, subscription } = useSelector(
+  const { razorpay } = useSelector(
     (state: RootState) => state.settings
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
@@ -29,10 +29,22 @@ export function Settings() {
   );
   
   const [razorPayInfo,setRazorPayInfo] = useState({
-    apiKey:  "",
-    apiSecret:  "",
-    webhookSecret:  "",
+    apiKey: razorpay?.razorPayKey || "",
+    apiSecret: razorpay?.razorPaySecret || "",
+    webhookSecret: razorpay?.razorPayWebhookSecret || "",
   });
+
+ 
+
+  useEffect(() => {
+    setRazorPayInfo({
+      apiKey: razorpay?.razorPayKey || "",
+      apiSecret: razorpay?.razorPaySecret || "",
+      webhookSecret: razorpay?.razorPayWebhookSecret || "",
+    });
+  }, [ razorpay]);
+
+
 
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     name: userFullData?.libraryData?.name || "",
@@ -114,6 +126,17 @@ export function Settings() {
     }
 
   };
+
+  console.log("userfull data",userFullData)
+
+  useEffect(() => {
+      try {
+        console.log("library id",userFullData?.libraryId)
+        dispatch(getRazorpayInfo(userFullData?.libraryId || ""));
+      } catch (error) {
+        
+      }
+  }, [userFullData?.libraryId])
 
 
 

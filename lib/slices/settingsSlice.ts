@@ -16,9 +16,10 @@ export interface AccountInfo {
 }
 
 interface RazorpayIntegration {
-  isConnected: boolean;
-  apiKey: string;
-  apiSecret: string;
+ 
+  razorPayKey: string;
+  razorPaySecret: string;
+  razorPayWebhookSecret: string;
 }
 
 interface SubscriptionInfo {
@@ -40,6 +41,8 @@ interface SettingsState {
   libraryDetailsLoading: boolean;
   featuredLibrariesData: any[] | null;
   featuredLibrariesLoading: boolean;
+ 
+
 }
 
 // ------------------ Initial State ------------------
@@ -232,6 +235,23 @@ export const featuredLibraries = createAsyncThunk(
     }
   }
 );
+export const getRazorpayInfo = createAsyncThunk(
+  "settings/getRazorpayInfo",
+  async (libraryId: string, { rejectWithValue }) => {
+    if (!libraryId) {
+      return rejectWithValue("Library ID is required");
+    }
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "GET",
+        url: `/libraries/${libraryId}/razorpay-info`,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update subscription");
+    }
+  }
+);
 
 // ------------------ Slice ------------------
 
@@ -274,7 +294,7 @@ const settingsSlice = createSlice({
       // 📌 Update Subscription
       .addCase(updateSubscription.fulfilled, (state, action) => {
         state.subscription = action.payload;
-        
+
       })
 
       // 📌 Filter Libraries
@@ -348,6 +368,17 @@ const settingsSlice = createSlice({
       })
       .addCase(featuredLibraries.rejected, (state, action) => {
         state.featuredLibrariesLoading = false;
+        state.error = action.payload as string;
+      })
+      // Get Razorpay Info
+      .addCase(getRazorpayInfo.fulfilled, (state, action) => {
+        state.razorpay = action.payload;
+      })
+      .addCase(getRazorpayInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getRazorpayInfo.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.payload as string;
       })
 
