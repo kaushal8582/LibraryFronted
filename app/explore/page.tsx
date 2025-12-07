@@ -39,6 +39,7 @@ import { AppDispatch, RootState } from "@/lib/store";
 import { filterLibraries } from "@/lib/slices/settingsSlice";
 import { useDebounce } from "@/common/debounce";
 import { truncateText } from "@/common/commonAction";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 
@@ -56,12 +57,15 @@ const facilities = [
 ];
 
 export default function ExplorePage() {
+  const [open,setOpen] = useState(false); // for sheet (filter dailog)
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState([500, 5000]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
   const [minRating, setMinRating] = useState(4);
   const [openNow, setOpenNow] = useState(true);
   const [location, setLocation] = useState("");
+  const isMobile = useIsMobile()
+
 
    const dispatch = useDispatch<AppDispatch>();
 
@@ -99,9 +103,15 @@ export default function ExplorePage() {
     }
   }
 
+
   useEffect(()=>{
+    if(isMobile)
+      return;
+
     getFilterData()
-  },[debounceSearchValue,priceRange,selectedFacilities,minRating,openNow,location])
+  },[debounceSearchValue,priceRange,selectedFacilities,minRating,openNow,location]);
+
+
 
 
 
@@ -114,14 +124,34 @@ export default function ExplorePage() {
     );
   };
 
-  const clearFilters = () => {
+    const clearFilters = () => {
     setSearchQuery("");
     setPriceRange([500, 5000]);
     setSelectedFacilities([]);
     setMinRating(4);
     setOpenNow(true);
     setLocation("");
-  };
+    
+    if(isMobile)
+      getFilterData();
+
+    
+  }
+  
+
+const handleApplyFilter = ()=>{
+  
+  getFilterData();
+  setOpen(false)
+}
+
+const handleClearFilter  = ()=>{
+  setOpen(false)
+
+  clearFilters();
+}
+
+
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
@@ -169,18 +199,21 @@ export default function ExplorePage() {
               />
 
               {/* Mobile Filter Button */}
-              <Sheet>
-                <SheetTrigger asChild>
+              <Sheet open={open} onOpenChange={setOpen}>
+                <SheetTrigger asChild >
                   <Button variant="outline" className="md:hidden">
                     <Filter className="w-4 h-4 mr-2" />
-                    Filterss
+                    Filters
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-full sm:max-w-md">
                   <SheetHeader>
-                    <SheetTitle>Filters</SheetTitle>
+                    
+                    <SheetTitle className="flex gap-2">
+                       <Filter className="w-5 h-5 border" />
+                      Filters</SheetTitle>
                   </SheetHeader>
-                  <div className="py-6 space-y-6">
+                  <div className=" space-y-6 px-6">
                     <FiltersContent
                       priceRange={priceRange}
                       setPriceRange={setPriceRange}
@@ -194,9 +227,19 @@ export default function ExplorePage() {
                       setLocation={setLocation}
                       clearFilters={clearFilters}
                     />
+
+
+                    <div className="grid place-items-center grid-cols-2 gap-4 w-full">
+ <Button className="w-full" onClick={handleApplyFilter}>Apply Filter</Button>
+   <Button variant="destructive" size="sm" className="w-full" onClick={handleClearFilter}>
+          Clear All
+        </Button>
+
+</div>
                   </div>
                 </SheetContent>
               </Sheet>
+              
             </div>
 
             <div className="flex items-center justify-between mb-8">
@@ -255,6 +298,7 @@ export default function ExplorePage() {
                   Try adjusting your filters or search term
                 </p>
                 <Button onClick={clearFilters}>Clear All Filters</Button>
+              
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-0">
@@ -375,10 +419,10 @@ function FiltersContent({
 }: any) {
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className=" items-center justify-between hidden md:flex">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <Filter className="w-5 h-5" />
-          Filterss
+          Filters
         </h3>
         <Button variant="ghost" size="sm" onClick={clearFilters}>
           Clear All
@@ -481,6 +525,7 @@ function FiltersContent({
           ))}
         </div>
       </div>
+
     </>
   );
 }
