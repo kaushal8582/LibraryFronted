@@ -9,6 +9,7 @@ import {
   Bell,
   Settings,
   LogOut,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +26,10 @@ export function Sidebar() {
 
   // Define all routes (base)
   const baseLinks = [
+
     { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
+    { href: "/", label: "Home", icon: Home },
+
     { href: "/dashboard/students", label: "Students", icon: Users },
     { href: "/dashboard/payments", label: "Payments", icon: CreditCard },
     { href: "/dashboard/reminders", label: "Reminders", icon: Bell },
@@ -50,10 +54,13 @@ export function Sidebar() {
       // librarian has full access except /student
       return [
         "/dashboard",
+  "/",
+
         "/dashboard/students",
         "/dashboard/payments",
         "/dashboard/reminders",
         "/dashboard/settings",
+        "/",
       ].includes(link.href);
     }
     if (role === "admin") {
@@ -74,9 +81,12 @@ export function Sidebar() {
       "/student/dashboard",
       "/student/payments",
       "/student/payment",
+      "/",
     ];
     const validLibrarianRoutes = [
   "/dashboard",
+  "/",
+
   "/dashboard/students",
   "/dashboard/payments",
   "/dashboard/reminders",
@@ -150,6 +160,7 @@ const isOnValidRoute =
 
       {/* ---- Navigation Links ---- */}
       <nav className="flex-1 space-y-2">
+
         {links.map((link) => {
           const isActive = pathname === link.href;
           const Icon = link.icon;
