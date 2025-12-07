@@ -27,8 +27,12 @@ export function Settings() {
   const { isProfilePhotoUploaded } = useSelector(
     (state: RootState) => state.students
   );
-  const [isHeroImageUploaded, setIsHeroImageUploaded] = useState(false);
-  const [isGalleryImageUploaded, setIsGalleryImageUploaded] = useState(false);
+  
+  const [razorPayInfo,setRazorPayInfo] = useState({
+    apiKey:  "",
+    apiSecret:  "",
+    webhookSecret:  "",
+  });
 
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     name: userFullData?.libraryData?.name || "",
@@ -58,6 +62,10 @@ export function Settings() {
 
   const handleUpdateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(accountInfo?.address===""){
+      toast.error("Please add your address");
+      return;
+    }
     try {
       setIsLoading(true);
       const response = await dispatch(
@@ -75,6 +83,40 @@ export function Settings() {
       console.error("Failed to update account:", error);
     }
   };
+
+
+  const saveRazorPayInfo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+
+      const payload ={
+        razorPayWebhookSecret : razorPayInfo.webhookSecret,
+        razorPaySecret : razorPayInfo.apiSecret,
+        razorPayKey : razorPayInfo.apiKey,
+      }
+
+      setIsLoading(true);
+      const response = await dispatch(
+        updateAccount({
+          libraryId: userFullData?.libraryId || "",
+          data: payload || null,
+        })
+      );
+      if (response.meta.requestStatus === "fulfilled") {
+        setIsLoading(false);
+        toast.success("Razorpay info updated successfully");
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Failed to update razorpay info:", error);
+    }finally{
+      setIsLoading(false);
+    }
+
+  };
+
+
+
 
   const handelProfileImgUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -102,7 +144,7 @@ export function Settings() {
 
       <div className="p-8 space-y-8 max-w-4xl">
         {/* Razorpay Integration */}
-        {/* <div className="bg-card rounded-lg border border-border p-6">
+        <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h3 className="text-lg font-semibold text-foreground">
@@ -112,7 +154,7 @@ export function Settings() {
                 Connect your Razorpay account to accept payments.
               </p>
             </div>
-            <button
+            {/* <button
               // onClick={() => setIsRazorpayEnabled(!isRazorpayEnabled)}
               className={`w-12 h-6 rounded-full transition-colors ${
                 1 ? "bg-blue-600" : "bg-gray-300"
@@ -123,7 +165,10 @@ export function Settings() {
                   1 ? "translate-x-6" : "translate-x-0.5"
                 }`}
               />
-            </button>
+            </button> */}
+            <Button isLoading={isLoading} onClick={saveRazorPayInfo} className="bg-blue-600 hover:bg-blue-700">
+            Save Changes
+          </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -132,10 +177,11 @@ export function Settings() {
                 API Key
               </label>
               <input
-                type="password"
-                // value={razorpay.apiKey}
+                type="text"
+                value={razorPayInfo.apiKey}
+                onChange={(e) => setRazorPayInfo({ ...razorPayInfo, apiKey: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                disabled
+                
               />
             </div>
             <div>
@@ -143,25 +189,27 @@ export function Settings() {
                 API Secret
               </label>
               <input
-                type="password"
-                // value={razorpay.apiSecret}
+                type="text"
+                value={razorPayInfo.apiSecret}
+                onChange={(e) => setRazorPayInfo({ ...razorPayInfo, apiSecret: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                disabled
+                
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                RazorPay webhook secret
+              </label>
+              <input
+                type="text"
+                value={razorPayInfo.webhookSecret}
+                onChange={(e) => setRazorPayInfo({ ...razorPayInfo, webhookSecret: e.target.value })}
+                className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                
               />
             </div>
           </div>
-
-          {1 && (
-            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 mb-6">
-              <Check className="w-4 h-4" />
-              Connected
-            </div>
-          )}
-
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            Save Changes
-          </Button>
-        </div> */}
+        </div>
         {/* header img */}
         <HeroImageUploader
           value={userFullData}

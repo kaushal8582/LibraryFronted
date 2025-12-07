@@ -41,8 +41,6 @@ import { useDebounce } from "@/common/debounce";
 import { truncateText } from "@/common/commonAction";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-
-
 const facilities = [
   { id: "wifi", label: "Wi-Fi", icon: <Wifi className="w-4 h-4" /> },
   { id: "ac", label: "AC", icon: <Snowflake className="w-4 h-4" /> },
@@ -57,64 +55,56 @@ const facilities = [
 ];
 
 export default function ExplorePage() {
-  const [open,setOpen] = useState(false); // for sheet (filter dailog)
+  const [open, setOpen] = useState(false); // for sheet (filter dailog)
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState([500, 5000]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
   const [minRating, setMinRating] = useState(4);
   const [openNow, setOpenNow] = useState(true);
   const [location, setLocation] = useState("");
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
+  const [resetClearFilter, setResetClearFilter] = useState(false);
 
+  const dispatch = useDispatch<AppDispatch>();
 
-   const dispatch = useDispatch<AppDispatch>();
-
-    const { libraries, libraryLoading } = useSelector(
+  const { libraries, libraryLoading } = useSelector(
     (state: RootState) => state.settings
   );
 
   const router = useRouter();
 
-
   const debounceSearchValue = useDebounce(searchQuery, 500);
 
-  
-
-
-
-  const getFilterData = async()=>{
-    
-
-    const payload ={
-      searchText : debounceSearchValue,
-      facilities : selectedFacilities,
+  const getFilterData = async () => {
+    const payload = {
+      searchText: debounceSearchValue,
+      facilities: selectedFacilities,
       // rating : minRating,
-      feeRange : priceRange[0],
-    }
+      feeRange: priceRange[0],
+    };
 
     try {
-     const res = await dispatch(filterLibraries(payload));
-      if(res.meta.requestStatus === "fulfilled"){
-        console.log("response ",res.payload)
+      const res = await dispatch(filterLibraries(payload));
+      if (res.meta.requestStatus === "fulfilled") {
+        console.log("response ", res.payload);
       }
     } catch (error) {
-      console.log(error)
-
+      console.log(error);
     }
-  }
+  };
 
+  useEffect(() => {
+    if (isMobile) return;
 
-  useEffect(()=>{
-    if(isMobile)
-      return;
-
-    getFilterData()
-  },[debounceSearchValue,priceRange,selectedFacilities,minRating,openNow,location]);
-
-
-
-
-
+    getFilterData();
+  }, [
+    debounceSearchValue,
+    priceRange,
+    selectedFacilities,
+    minRating,
+    openNow,
+    location,
+  ]);
 
   const toggleFacility = (facilityId: string) => {
     setSelectedFacilities((prev) =>
@@ -124,34 +114,31 @@ export default function ExplorePage() {
     );
   };
 
-    const clearFilters = () => {
+  const clearFilters = () => {
     setSearchQuery("");
     setPriceRange([500, 5000]);
     setSelectedFacilities([]);
     setMinRating(4);
     setOpenNow(true);
     setLocation("");
-    
-    if(isMobile)
-      getFilterData();
+    if(isMobile) setResetClearFilter(!resetClearFilter);
+  };
 
-    
-  }
-  
+  useEffect(()=>{
+    getFilterData();
 
-const handleApplyFilter = ()=>{
-  
-  getFilterData();
-  setOpen(false)
-}
+  },[resetClearFilter])
 
-const handleClearFilter  = ()=>{
-  setOpen(false)
+  const handleApplyFilter = () => {
+    getFilterData();
+    setOpen(false);
+  };
 
-  clearFilters();
-}
+  const handleClearFilter = () => {
+    setOpen(false);
 
-
+    clearFilters();
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
@@ -200,7 +187,7 @@ const handleClearFilter  = ()=>{
 
               {/* Mobile Filter Button */}
               <Sheet open={open} onOpenChange={setOpen}>
-                <SheetTrigger asChild >
+                <SheetTrigger asChild>
                   <Button variant="outline" className="md:hidden">
                     <Filter className="w-4 h-4 mr-2" />
                     Filters
@@ -208,10 +195,10 @@ const handleClearFilter  = ()=>{
                 </SheetTrigger>
                 <SheetContent side="right" className="w-full sm:max-w-md">
                   <SheetHeader>
-                    
                     <SheetTitle className="flex gap-2">
-                       <Filter className="w-5 h-5 border" />
-                      Filters</SheetTitle>
+                      <Filter className="w-5 h-5 border" />
+                      Filters
+                    </SheetTitle>
                   </SheetHeader>
                   <div className=" space-y-6 px-6">
                     <FiltersContent
@@ -228,18 +215,22 @@ const handleClearFilter  = ()=>{
                       clearFilters={clearFilters}
                     />
 
-
                     <div className="grid place-items-center grid-cols-2 gap-4 w-full">
- <Button className="w-full" onClick={handleApplyFilter}>Apply Filter</Button>
-   <Button variant="destructive" size="sm" className="w-full" onClick={handleClearFilter}>
-          Clear All
-        </Button>
-
-</div>
+                      <Button className="w-full" onClick={handleApplyFilter}>
+                        Apply Filter
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="w-full"
+                        onClick={handleClearFilter}
+                      >
+                        Clear All
+                      </Button>
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>
-              
             </div>
 
             <div className="flex items-center justify-between mb-8">
@@ -298,7 +289,6 @@ const handleClearFilter  = ()=>{
                   Try adjusting your filters or search term
                 </p>
                 <Button onClick={clearFilters}>Clear All Filters</Button>
-              
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-0">
@@ -308,7 +298,11 @@ const handleClearFilter  = ()=>{
                     className=" pt-0!  group overflow-hidden hover:shadow-xl transition-all duration-300 border-gray-200"
                   >
                     <div className={`${library?.heroImg} h-48 relative`}>
-                      <img src={library?.heroImg} alt={library?.name} className="w-full h-full object-cover" />
+                      <img
+                        src={library?.heroImg}
+                        alt={library?.name}
+                        className="w-full h-full object-cover"
+                      />
                       {/* Status Badge */}
                       <div className="absolute top-4 left-4">
                         <Badge
@@ -342,7 +336,7 @@ const handleClearFilter  = ()=>{
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-xl font-bold text-gray-900 mb-1">
-                            { truncateText( library.name,14)}
+                            {truncateText(library.name, 14)}
                           </h3>
                           <div className="flex items-center text-gray-600 mb-2">
                             <MapPin className="w-4 h-4 mr-1" />
@@ -351,7 +345,7 @@ const handleClearFilter  = ()=>{
                         </div>
                         <div className="text-right flex items-center justify-center">
                           <div className="text-1xl font-bold text-blue-600">
-                            ₹{library?.minPrice }
+                            ₹{library?.minPrice}
                           </div>
                           <div className="text-sm text-gray-500">/m</div>
                         </div>
@@ -359,7 +353,7 @@ const handleClearFilter  = ()=>{
 
                       {/* Facilities */}
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {library.facilities?.map((facility:string) => {
+                        {library.facilities?.map((facility: string) => {
                           const facilityIcon = facilities.find(
                             (f) => f.label === facility
                           )?.icon;
@@ -479,29 +473,27 @@ function FiltersContent({
       </div> */}
 
       {/* Rating */}
-     
 
-        <div className="space-y-3">
-          <h4 className="font-medium text-gray-900 flex items-center gap-2">
-            <Star className="w-4 h-4" />
-            Rating
-          </h4>
+      <div className="space-y-3">
+        <h4 className="font-medium text-gray-900 flex items-center gap-2">
+          <Star className="w-4 h-4" />
+          Rating
+        </h4>
 
-          <div className="flex items-center gap-2">
-            {[1, 2, 3, 4, 5].map((starValue) => (
-              <Star
-                key={starValue}
-                onClick={() => setMinRating(starValue)}
-                className={`w-6 h-6 cursor-pointer transition ${
-                  starValue <= minRating
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
-          </div>
+        <div className="flex items-center gap-2">
+          {[1, 2, 3, 4, 5].map((starValue) => (
+            <Star
+              key={starValue}
+              onClick={() => setMinRating(starValue)}
+              className={`w-6 h-6 cursor-pointer transition ${
+                starValue <= minRating
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-gray-300"
+              }`}
+            />
+          ))}
         </div>
-     
+      </div>
 
       {/* Facilities */}
       <div className="space-y-4">
@@ -525,7 +517,6 @@ function FiltersContent({
           ))}
         </div>
       </div>
-
     </>
   );
 }

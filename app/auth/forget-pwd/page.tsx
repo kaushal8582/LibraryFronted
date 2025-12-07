@@ -1,5 +1,7 @@
 "use client";
 
+import Footer from "@/components/hero/Footer";
+import Nav from "@/components/hero/Nav";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -47,6 +49,10 @@ const ForgetPwd = () => {
     }
   };
   return (
+    <div>
+
+      <Nav/>
+
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
@@ -89,6 +95,10 @@ const ForgetPwd = () => {
           </CardContent>
         </form>
       </Card>
+    </div>
+
+    <Footer/>
+
     </div>
   );
 };

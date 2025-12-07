@@ -274,6 +274,7 @@ const settingsSlice = createSlice({
       // 📌 Update Subscription
       .addCase(updateSubscription.fulfilled, (state, action) => {
         state.subscription = action.payload;
+        
       })
 
       // 📌 Filter Libraries

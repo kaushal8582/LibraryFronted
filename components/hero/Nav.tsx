@@ -20,6 +20,7 @@ import { RootState } from '@/lib/store'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { useRouter } from 'next/navigation'
+import { LibTrackLogo1, LibTrackLogo2, LibTrackLogo3, LibTrackLogo4 } from '../logo'
 
 interface LinkInterface {
   id: number,
@@ -87,7 +88,11 @@ const router = useRouter()
             <Menu className="w-6 h-6" />
           )}
         </button>
-          <h2 className="text-xl font-bold text-gray-800">Libtrack</h2>
+          <h2 onClick={()=>router.push("/")} className=" cursor-pointer text-xl font-bold text-gray-800">Libtrack</h2>
+          {/* <LibTrackLogo1/>
+          <LibTrackLogo2/>
+          <LibTrackLogo3/>
+          <LibTrackLogo4/> */}
         </div>
 
  

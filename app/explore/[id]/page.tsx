@@ -56,9 +56,9 @@ export default function LibraryDetailsPage() {
   const { userFullData } = useSelector((state: RootState) => state.auth);
 
   // console.log("user data ", userFullData);
-  useEffect(() => {
-    dispatch(fetchCurrentUser());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchCurrentUser());
+  // }, [dispatch]);
 
   const getLibraryDetails = async () => {
     try {
@@ -245,8 +245,12 @@ export default function LibraryDetailsPage() {
                         </div>
                         <p className="text-sm text-green-600 mt-1">
                           Closes at{" "}
-                          {convertToIndianTime(
-                            libraryDetails?.closingHours || ""
+                          {libraryDetails?.closingHours ? (
+                            convertToIndianTime(
+                              libraryDetails?.closingHours || ""
+                            )
+                          ) : (
+                            "N/A"
                           )}{" "}
                           PM today
                         </p>

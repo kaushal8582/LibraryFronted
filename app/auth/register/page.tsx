@@ -22,6 +22,8 @@ import { registerUser } from "@/lib/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import toast from "react-hot-toast";
+import Nav from "@/components/hero/Nav";
+import Footer from "@/components/hero/Footer";
 
 type RegisterFormInputs = {
   name: string;
@@ -82,6 +84,10 @@ export default function RegisterPage() {
   };
 
   return (
+
+    <div>
+      <Nav/>
+    
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
@@ -223,6 +229,8 @@ export default function RegisterPage() {
           </CardFooter>
         </form>
       </Card>
+    </div>
+    <Footer/>
     </div>
   );
 }
