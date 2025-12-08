@@ -4,14 +4,14 @@ import toast from "react-hot-toast";
 
 // ✅ Create Axios instance with some defaults
 const axiosInstance = axios.create({
-  baseURL:  "http://localhost:5002/api",
+  baseURL:  "https://librarybackend-ke0y.onrender.com/api",
   timeout: 15000,
   // headers: {
   //   "Content-Type": "application/json",
   // },
 });
 
-
+// .
 
 // Dynamically set content type
 axiosInstance.interceptors.request.use(

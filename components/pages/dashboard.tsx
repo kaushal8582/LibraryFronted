@@ -35,7 +35,7 @@ export function Dashboard() {
 
   return (
     <div>
-      <Header title="Dashboard" subtitle="Last 30 Days" />
+      <Header title="Dashboard" subtitle="" />
       <div className="flex items-center justify-start gap-2 pt-3 pl-8" >
 
       <h3>Select Month</h3>

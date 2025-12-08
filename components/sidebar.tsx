@@ -194,8 +194,8 @@ const isOnValidRoute =
           router.push("/auth/login");
         }}
       >
-        <LogOut className="w-5 h-5" />
-        <span>Logout</span>
+        <LogOut className="w-5 h-5 text-white" />
+        <span className="font-semibold text-white">Logout</span>
       </button>
     </div>
   );
