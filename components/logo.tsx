@@ -1,6 +1,6 @@
 export const LibTrackLogo1 = () => (
   <div className="flex items-center space-x-2 select-none">
-    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-md">
+    <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-md">
       <span className="text-white font-bold text-xl">L</span>
     </div>
     <span className="text-2xl font-bold tracking-wide">LibTrack</span>

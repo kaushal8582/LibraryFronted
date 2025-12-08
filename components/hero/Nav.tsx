@@ -20,12 +20,10 @@ import {
 import { RootState } from '@/lib/store'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-<<<<<<< Updated upstream
-import { useRouter } from 'next/navigation'
+
 import { LibTrackLogo1, LibTrackLogo2, LibTrackLogo3, LibTrackLogo4 } from '../logo'
-=======
+
 import { useRouter,usePathname } from 'next/navigation'
->>>>>>> Stashed changes
 
 interface LinkInterface {
   id: number,

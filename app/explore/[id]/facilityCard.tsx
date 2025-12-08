@@ -148,10 +148,10 @@ export default function FacilityGrid({
           return (
             <div
               key={`${f.raw}-${idx}`}
-              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white  border border-border shadow-sm hover:shadow-md transition bg-green-500"
+              className="flex flex-col items-center gap-2 p-3 rounded-xl   border border-border shadow-sm hover:shadow-md transition bg-white"
             >
               <IconWrapper size={iconSize}>{Icon(iconSize)}</IconWrapper>
-              {showLabels && <div className="text-xs text-center text-foreground/90 truncate max-w-[8rem]">{f.raw}</div>}
+              {showLabels && <div className="text-xs text-center text-foreground/90 truncate max-w-32">{f.raw}</div>}
             </div>
           );
         })}
