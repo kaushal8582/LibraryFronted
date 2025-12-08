@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Card,
@@ -49,8 +49,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const params = useSearchParams();
-    const callbackUrl = params.get("callback");
+  // const params = useSearchParams();
+  //   const callbackUrl = params.get("callback");
 
    
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
   // Watch role changes
   const watchedRole = watch("role");
 
-  // Update selected role when form role changes
+  
   useEffect(() => {
     if (watchedRole) {
       setSelectedRole(watchedRole);
@@ -121,9 +121,9 @@ export default function LoginPage() {
       if (res.meta.requestStatus === "fulfilled") {
         await dispatch(fetchCurrentUser());
         if (res.payload?.user?.role === "student") {
-          router.push(callbackUrl || "/student/dashboard");
+          router.push("/student/dashboard");
         } else {
-          router.push(callbackUrl || "/dashboard");
+          router.push( "/dashboard");
         }
       }
     } catch (error) {
