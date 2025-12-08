@@ -172,15 +172,12 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       // Call logout endpoint if your API requires it
-      await apiCaller({
-        method: "POST",
-        url: "/auth/logout",
-      });
+      
       
       // Remove token from localStorage
       localStorage.removeItem("accessToken");
       
-      return null;
+      return  Promise.resolve(()=>{});
     } catch (error: any) {
       // Even if API call fails, we should still clear local state
       localStorage.removeItem("accessToken");
@@ -310,12 +307,14 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.token = null;
+        state.userFullData = null;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
         state.token = null;
+        state.userFullData = null;
       })
       
       // Fetch current user cases

@@ -56,14 +56,14 @@ export default function ContactPage() {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email",
-      details: "support@libtrack.com",
+      details: "libtrack.help@gmail.com",
       description: "We'll respond within 24 hours"
     },
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Phone",
-      details: "+1 (555) 123-4567",
-      description: "Mon-Fri, 9am-6pm PST"
+      details: "+91 8582063716",
+      description: "Mon-Sun, 9am-8pm "
     },
     // {
     //   icon: <MapPin className="w-6 h-6" />,
@@ -252,9 +252,9 @@ export default function ContactPage() {
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">{method.title}</h3>
                       <p className="text-gray-900 font-medium mb-1">{method.details}</p>
-                      {method.subDetails && (
+                      {/* {method.subDetails && (
                         <p className="text-gray-600">{method.subDetails}</p>
-                      )}
+                      )} */}
                       <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
                         <Clock className="w-4 h-4" />
                         <span>{method.description}</span>
