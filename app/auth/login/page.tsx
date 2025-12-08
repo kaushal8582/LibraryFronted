@@ -125,6 +125,7 @@ export default function LoginPage() {
         } else {
           router.push( "/dashboard");
         }
+        
       }
     } catch (error) {
       setIsLoading(false);
