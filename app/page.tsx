@@ -104,7 +104,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header>
+      <header className="sticky top-0 z-50">
         <Nav />
       </header>
 

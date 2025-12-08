@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import React, { useState } from 'react'
+
 import { Button } from '../ui/button'
 import {
   Menu,
@@ -19,8 +20,10 @@ import {
 import { RootState } from '@/lib/store'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { useRouter } from 'next/navigation'
+
 import { LibTrackLogo1, LibTrackLogo2, LibTrackLogo3, LibTrackLogo4 } from '../logo'
+
+import { useRouter,usePathname } from 'next/navigation'
 
 interface LinkInterface {
   id: number,
@@ -62,6 +65,7 @@ const Nav = () => {
   const { userFullData } = useSelector((state: RootState) => state.auth);
 
 const router = useRouter()
+const pathname = usePathname();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
@@ -74,7 +78,7 @@ const router = useRouter()
   return (
     <>
 
-      <nav className='w-full h-20 bg-white border-b border-gray-200 shadow flex items-center justify-between sticky top-0 z-50 px-4 md:px-8'>
+      <nav className='w-full h-14 bg-white border-b border-gray-200 shadow flex items-center justify-between sticky top-0 z-50 px-4 md:px-8'>
    
         <div className='flex items-center justify-center gap-4'>
              <button
@@ -100,9 +104,14 @@ const router = useRouter()
           <ul className='flex items-center'>
             {LINKS.map((link) => (
               <Link href={link.href} key={link.id}>
-                <li className="inline-block px-4 font-medium text-gray-600 hover:text-gray-800 transition-colors duration-200">
-                  {link.label}
-                </li>
+               <li
+  className={`
+    inline-block px-4 font-medium transition-colors duration-200
+    ${pathname === link.href ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-gray-800"}
+  `}
+>
+  {link.label}
+</li>
               </Link>
             ))}
           </ul>
@@ -130,12 +139,12 @@ const router = useRouter()
           
           
           </> : <>
-             <div className='space-x-4 max-md:hidden'>
+             <div className='space-x-4 '>
             <Button onClick={()=>router.push("/auth/login")} variant={"outline"} className="gap-2">
               <LogIn className="w-4 h-4" />
               Login
             </Button>
-            <Button onClick={()=>router.push("/auth/register")} className="gap-2">
+            <Button onClick={()=>router.push("/auth/register")} className="gap-2 max-md:hidden">
               <UserPlus className="w-4 h-4" />
               Sign-up
             </Button>
@@ -166,7 +175,7 @@ const router = useRouter()
  
 
 
-          <div className="p-4 mt-12">
+          <div className="p-4 mt-14">
 
            
             <ul className="space-y-2">
@@ -188,7 +197,7 @@ const router = useRouter()
 
              
               {LINKS.map((link) => (
-                <li key={link.id}>
+                <li key={link.id} className={`${pathname === link.href ? "bg-gray-200 text-white rounded-md":""}   `}>
                   <Link
                     href={link.href}
                     onClick={closeSidebar}
@@ -203,33 +212,6 @@ const router = useRouter()
 
 
 
-{
-  !userFullData &&  <>
-  
-  
-    <div className="mt-8 space-y-4">
-              <Button
-                variant="outline"
-                className="w-full justify-start gap-3"
-                onClick={()=>router.push('/auth/login')}
-              >
-                <LogIn className="w-4 h-4" />
-                Login
-              </Button>
-              <Button
-                className="w-full justify-start gap-3"
-                onClick={()=>router.push('/auth/register')}
-              >
-                <UserPlus className="w-4 h-4" />
-                Sign Up
-              </Button>
-            </div>
-
-   
-  </>
-
-  
-}
    
           
           </div>
