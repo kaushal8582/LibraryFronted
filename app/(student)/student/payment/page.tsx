@@ -172,16 +172,17 @@ export default function StudentPayment() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {userFullData?.studentData?.nextDueDate &&
+  
+              { userFullData?.studentData?.nextDueDate &&
               userFullData?.studentData?.nextDueDate <=
                 new Date().toISOString().split("T")[0] ? (
                 <button
                   onClick={handlePayment}
-                  className="w-[250px] mt-4  from-blue-500 to-indigo-600 
+                  className="w-[250px] mt-4 
              text-white font-semibold py-2 rounded-lg 
              shadow-md hover:shadow-lg hover:-translate-y-0.5 
              transition-all duration-300 ease-in-out 
-             focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 cursor-pointer"
+             focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 cursor-pointer bg-linear-to-tl from-cyan-500 to to-blue-700"
                 >
                   Make Payment 💳
                 </button>

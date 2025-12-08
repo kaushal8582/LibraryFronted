@@ -2,6 +2,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import toast from "react-hot-toast";
 
+
+
+
 // ✅ Create Axios instance with some defaults
 const axiosInstance = axios.create({
   baseURL:  "https://librarybackend-ke0y.onrender.com/api",
@@ -46,7 +49,7 @@ axiosInstance.interceptors.response.use(
      
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
-      window.location.href = "/auth/login";
+      window.location.href = `/auth/login?callback=${location.pathname}`;
     }
     return Promise.reject(error.response?.data || error.message);
   }

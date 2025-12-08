@@ -40,6 +40,7 @@ import { filterLibraries } from "@/lib/slices/settingsSlice";
 import { useDebounce } from "@/common/debounce";
 import { truncateText } from "@/common/commonAction";
 import { useIsMobile } from "@/hooks/use-mobile";
+import SkeletonLoader from "@/components/loaders/SkeletonLoaders";
 
 const facilities = [
   { id: "wifi", label: "Wi-Fi", icon: <Wifi className="w-4 h-4" /> },
@@ -275,6 +276,23 @@ export default function ExplorePage() {
                 )}
               </div> */}
             </div>
+
+
+
+            {
+              libraryLoading && <div  className="flex items-center gap-4 flex-wrap">
+              {
+
+                Array(6).fill(" ").map((_,index)=>(
+                     <div key={index}>
+
+                  <SkeletonLoader type="card"/>
+                </div>
+                ))
+                
+              }
+              </div>
+            }
 
             {/* Libraries Grid */}
             {libraries?.length === 0 ? (

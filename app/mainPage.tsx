@@ -4,7 +4,7 @@ import { Dashboard } from "@/components/pages/dashboard";
 import { Sidebar } from "@/components/sidebar";
 import { fetchCurrentUser } from "@/lib/slices/authSlice";
 import { AppDispatch, RootState } from "@/lib/store";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const MainPage = () => {
@@ -45,8 +45,15 @@ const MainPage = () => {
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto">
+
+
+
+
+<Dashboard />
+
+
         
-        <Dashboard />
+        
       </main>
     </div>
   );

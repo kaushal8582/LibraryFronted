@@ -8,6 +8,7 @@ import { Download, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getPaymentsByLibrary } from "@/lib/slices/paymentsSlice";
 import { useMediaQuery } from "@/common/useMediaQuery";
+import SkeletonLoader from "../loaders/SkeletonLoaders";
 
 export function Payments() {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,7 +17,7 @@ export function Payments() {
   const [lastDays, setLastDays] = useState(30);
    const isMobile = useMediaQuery("(max-width:600px)");
 
-  const { libraryPayments, TotalInPagination } = useSelector(
+  const { libraryPayments, TotalInPagination,isLoading } = useSelector(
     (state: RootState) => state.payments
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
@@ -72,7 +73,16 @@ export function Payments() {
 
         {/* Table */}
         <div className="bg-card rounded-lg border border-border overflow-hidden">
-          <table className="w-full">
+         
+
+
+
+
+               {
+                isLoading ? <div className="w-full my-1">
+                  <SkeletonLoader type="table" count={6}/>
+                </div> : <>
+               <table className="w-full">
             <thead>
               <tr className="border-b border-border bg-secondary">
                 <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -92,8 +102,8 @@ export function Payments() {
                 </th>
               </tr>
             </thead>
-
-            <tbody>
+            
+                <tbody>
               {libraryPayments.map((payment) => (
                 <tr
                   key={payment._id}
@@ -122,8 +132,16 @@ export function Payments() {
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
+            </tbody></table>
+                
+                </>
+              }
+
+          
+          
+
+
+        
 
           {/* Pagination */}
           <div className="px-6 py-4 border-t border-border flex items-center justify-between">

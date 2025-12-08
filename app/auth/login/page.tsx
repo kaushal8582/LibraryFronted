@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Card,
@@ -48,6 +48,11 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const params = useSearchParams();
+    const callbackUrl = params.get("callback");
+
+   
 
   const [selectedRole, setSelectedRole] = useState<"student" | "librarian">(
     "librarian"
@@ -116,9 +121,9 @@ export default function LoginPage() {
       if (res.meta.requestStatus === "fulfilled") {
         await dispatch(fetchCurrentUser());
         if (res.payload?.user?.role === "student") {
-          router.push("/student/dashboard");
+          router.push(callbackUrl || "/student/dashboard");
         } else {
-          router.push("/dashboard");
+          router.push(callbackUrl || "/dashboard");
         }
       }
     } catch (error) {

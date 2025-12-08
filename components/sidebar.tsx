@@ -48,6 +48,8 @@ export function Sidebar() {
         "/student/dashboard",
         "/student/payments",
         "/student/payment",
+        "/"
+        
       ].includes(link.href);
     }
     if (role === "librarian") {
@@ -71,6 +73,13 @@ export function Sidebar() {
   });
 
   const router = useRouter();
+
+
+  const handleLogout = ()=>{
+          localStorage.removeItem("accessToken");
+          localStorage.clear();
+          router.push("/")
+  }
 
   // Only redirect once when role is first loaded and we're not on a valid route
   useEffect(() => {
@@ -113,6 +122,7 @@ const isOnValidRoute =
       // Admin doesn't need redirect, they can access everything
     }
   }, [role, pathname]); // Add pathname to dependencies
+
 
   return (
     <div
@@ -188,11 +198,7 @@ const isOnValidRoute =
       {/* ---- Logout Button ---- */}
       <button
         className=" absolute bottom-6 flex items-center gap-3 w-[calc(100%-50px)] px-4 py-2 rounded-lg text-sidebar-foreground hover:bg-red-400 cursor-pointer bg-red-600  transition-colors"
-        onClick={() => {
-          localStorage.removeItem("accessToken");
-          localStorage.clear();
-          router.push("/auth/login");
-        }}
+        onClick={handleLogout}
       >
         <LogOut className="w-5 h-5 text-white" />
         <span className="font-semibold text-white">Logout</span>

@@ -27,6 +27,7 @@ import { featuredLibraries, filterLibraries } from "@/lib/slices/settingsSlice";
 import { truncateText } from "@/common/commonAction";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import SkeletonLoader from "@/components/loaders/SkeletonLoaders";
 
 export default function Home() {
 
@@ -66,8 +67,6 @@ export default function Home() {
   const { libraries, libraryLoading ,featuredLibrariesData,featuredLibrariesLoading} = useSelector(
     (state: RootState) => state.settings
   );
-
-  console.log(featuredLibrariesData);
 
 
   const debounceSearchValue = useDebounce(searchQuery, 500);
@@ -320,7 +319,27 @@ export default function Home() {
               </Button>
             </div>
 
+
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+
+
+              {
+                featuredLibrariesLoading && <>
+                   {
+                    Array(5).fill(" ").map((_,index)=>(
+                      <div>
+                        <SkeletonLoader type="card"/>
+                      </div>
+                    ))
+                   }
+                </>
+              }
+
+
+
+              
               {featuredLibrariesData?.map((spot, index) => (
                 <div
                   key={index}
@@ -359,13 +378,15 @@ export default function Home() {
                         <Coffee className="w-4 h-4 text-amber-500" />
                       </div>
                     </div>
-                    <Button className=" cursor-pointer w-full group-hover:bg-blue-600 transition-colors">
+                    <Button onClick={()=>router.push(`/explore/${spot._id}`)} className=" cursor-pointer w-full group-hover:bg-blue-600 transition-colors">
                       View <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
+
+         
           </div>
         </section>
 

@@ -12,6 +12,9 @@ export default function AppInitializer({ children }: { children: React.ReactNode
   const pathname = usePathname();
   const didFetchRef = useRef(false);
 
+
+   
+
   const { userFullData } = useSelector((state: RootState) => state.auth);
 
   const token =
@@ -47,7 +50,7 @@ export default function AppInitializer({ children }: { children: React.ReactNode
   useEffect(() => {
     if (!token) {
       if (!isPublicPath(pathname)) {
-        router.push("/auth/login");
+        router.push(`/auth/login`);
       }
       return;
     }

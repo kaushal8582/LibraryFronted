@@ -17,10 +17,12 @@ import MembershipPasses from "../MemberShipPasses";
 import WhatYouOffer from "../WhatOffer";
 import HeroImageUploader from "../HeroImageUploader";
 import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
+import Loader from "../loaders/Loader";
+import SkeletonLoader from "../loaders/SkeletonLoaders";
 
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
-  const { razorpay } = useSelector(
+  const { razorpay,isLoading : razorpayLoading } = useSelector(
     (state: RootState) => state.settings
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
@@ -167,7 +169,9 @@ export function Settings() {
 
       <div className="p-8 space-y-8 max-w-4xl">
         {/* Razorpay Integration */}
-        <div className="bg-card rounded-lg border border-border p-6">
+
+        {
+          !razorpayLoading ? <SkeletonLoader type="text"/> : (  <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h3 className="text-lg font-semibold text-foreground">
@@ -232,7 +236,9 @@ export function Settings() {
               />
             </div>
           </div>
-        </div>
+        </div>)
+        }
+      
         {/* header img */}
         <HeroImageUploader
           value={userFullData}

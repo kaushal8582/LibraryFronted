@@ -30,12 +30,13 @@ import { useRouter } from "next/navigation";
 import { useDebounce } from "@/common/debounce";
 import { AddCashPaymentModal } from "../AddCashPaymentDialog";
 import { useMediaQuery } from "@/common/useMediaQuery";
+import SkeletonLoader from "../loaders/SkeletonLoaders";
 
 export function Students() {
   const isMobile = useMediaQuery("(max-width:600px)");
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { filteredStudents, searchQuery } = useSelector(
+  const { filteredStudents, searchQuery,isLoading } = useSelector(
     (state: RootState) => state.students
   );
   const [search, setSearch] = useState("");
@@ -106,7 +107,9 @@ export function Students() {
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
+        
             <TableBody>
+             
               {filteredStudents.map((student) => (
                 <TableRow
                   key={student._id}
@@ -187,6 +190,12 @@ export function Students() {
               ))}
             </TableBody>
           </Table>
+
+               {
+                isLoading && filteredStudents.length == 0 && <div className="w-full my-1">
+                  <SkeletonLoader type="table" count={6}/>
+                </div>
+              }
         </div>
       </div>
     </div>

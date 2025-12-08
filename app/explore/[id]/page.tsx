@@ -41,6 +41,8 @@ import { convertToIndianTime } from "@/common/commonAction";
 import FacilityGrid from "./facilityCard";
 import ReviewComponent from "./reviewComponent";
 import { fetchCurrentUser } from "@/lib/slices/authSlice";
+import SkeletonLoader from "@/components/loaders/SkeletonLoaders";
+import Loader from "@/components/loaders/Loader";
 
 export default function LibraryDetailsPage() {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -50,7 +52,7 @@ export default function LibraryDetailsPage() {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const { libraryDetails, libraryLoading } = useSelector(
+  const { libraryDetails, libraryDetailsLoading } = useSelector(
     (state: RootState) => state.settings
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
@@ -77,12 +79,23 @@ export default function LibraryDetailsPage() {
     getLibraryDetails();
   }, [id, userFullData?._id, action]);
 
+
+
+
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
       <Nav />
 
-      {libraryDetails ? (
-        <div>
+{
+  libraryDetailsLoading && 
+    <Loader />
+
+}
+
+  
+
+{
+  libraryDetails && <div>
           {/* Hero Section with Library Image */}
           <div className="relative h-[500px] overflow-hidden">
             {/* BG Image */}
@@ -369,17 +382,10 @@ export default function LibraryDetailsPage() {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="w-full h-[80vh] grid place-content-center">
-          <div className="flex items-center justify-center flex-col gap-4">
-            <h2 className="text-xl font-semibold">Library Not found .</h2>
+}
 
-            <Link href={"/explore"}>
-              <Button className="">Back</Button>
-            </Link>
-          </div>
-        </div>
-      )}
+        
+   
 
       <Footer />
     </div>
