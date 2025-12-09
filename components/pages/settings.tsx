@@ -19,6 +19,7 @@ import HeroImageUploader from "../HeroImageUploader";
 import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
 import Loader from "../loaders/Loader";
 import SkeletonLoader from "../loaders/SkeletonLoaders";
+import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from "@/components/ui/input-group";
 
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,10 +31,18 @@ export function Settings() {
     (state: RootState) => state.students
   );
   
+  const stripAccPrefix = (v: string) => (v || "").replace(/^acc_/, "");
+  const ensureAccPrefix = (v: string) => {
+    const trimmed = (v || "").trim();
+    return trimmed.startsWith("acc_") ? trimmed : `acc_${trimmed}`;
+  };
+
   const [razorPayInfo,setRazorPayInfo] = useState({
     apiKey: razorpay?.razorPayKey || "",
     apiSecret: razorpay?.razorPaySecret || "",
     webhookSecret: razorpay?.razorPayWebhookSecret || "",
+    // Store only the suffix in state; UI shows fixed acc_ prefix
+    accountId: stripAccPrefix(razorpay?.razorPayAccountId || ""),
   });
 
  
@@ -43,6 +52,8 @@ export function Settings() {
       apiKey: razorpay?.razorPayKey || "",
       apiSecret: razorpay?.razorPaySecret || "",
       webhookSecret: razorpay?.razorPayWebhookSecret || "",
+      // When loading from server, strip fixed acc_ prefix for editing
+      accountId: stripAccPrefix(razorpay?.razorPayAccountId || ""),
     });
   }, [ razorpay]);
 
@@ -107,6 +118,8 @@ export function Settings() {
         razorPayWebhookSecret : razorPayInfo.webhookSecret,
         razorPaySecret : razorPayInfo.apiSecret,
         razorPayKey : razorPayInfo.apiKey,
+        // Always save with the required acc_ prefix
+        razorPayAccountId : ensureAccPrefix(razorPayInfo.accountId),
       }
 
       setIsLoading(true);
@@ -234,6 +247,24 @@ export function Settings() {
                 className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                RazorPay Account Id
+              </label>
+              <InputGroup className="bg-secondary">
+                <InputGroupAddon>
+                  <InputGroupText>acc_</InputGroupText>
+                </InputGroupAddon>
+                <InputGroupInput
+                  type="text"
+                  value={razorPayInfo.accountId}
+                  onChange={(e) =>
+                    setRazorPayInfo({ ...razorPayInfo, accountId: e.target.value })
+                  }
+                  placeholder="Enter your Razorpay account ID"
+                />
+              </InputGroup>
             </div>
           </div>
         </div>)
