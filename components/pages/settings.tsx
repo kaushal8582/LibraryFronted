@@ -21,6 +21,7 @@ import Loader from "../loaders/Loader";
 import SkeletonLoader from "../loaders/SkeletonLoaders";
 import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from "@/components/ui/input-group";
 
+
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
   const { razorpay,isLoading : razorpayLoading } = useSelector(
@@ -211,7 +212,7 @@ export function Settings() {
           </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
                 API Key
@@ -266,7 +267,29 @@ export function Settings() {
                 />
               </InputGroup>
             </div>
+
+          
+
           </div>
+
+
+ <div className="w-full my-4 flex items-center justify-between gap-6 mx-auto text-center md:text-left">
+
+  {/* Left Section */}
+  <div>
+    <h3 className="text-xl font-semibold mb-2 text-gray-500">Test Payment Amount</h3>
+    <div className="text-4xl font-bold text-blue-600">₹1.00</div>
+    <p className="text-muted-foreground mt-2">
+      This amount receive in your razorpay account
+    </p>
+  </div>
+
+  {/* Right Section */}
+  <Button className="px-8 bg-linear-to-bl from-blue-500 to-blue-800 cursor-pointer">
+    Pay & Test
+  </Button>
+</div>
+       
         </div>)
         }
       
