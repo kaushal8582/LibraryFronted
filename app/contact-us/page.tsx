@@ -3,11 +3,14 @@
 
 import Footer from '@/components/hero/Footer';
 import Nav from '@/components/hero/Nav';
+import ButtonLoader from '@/components/loaders/ButtonLoader';
+import { createQuery } from '@/lib/slices/querySlice';
+import { AppDispatch } from '@/lib/store';
 import { 
   Mail, 
   Phone, 
   MapPin, 
-  Send, 
+  Send,  
   MessageSquare, 
   User, 
   MailIcon,
@@ -16,8 +19,21 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
+
+type QueryFormInputs = {
+  name:string;
+  email: string;
+  subject: string;
+  message: string;
+};
+
 
 export default function ContactPage() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading,setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,25 +41,59 @@ export default function ContactPage() {
     message: ''
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real application, you would handle form submission here
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        subject: 'general',
-        message: ''
-      });
-    }, 3000);
+    const dispatch = useDispatch<AppDispatch>();
+
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = useForm<QueryFormInputs>();
+
+
+  const onSubmit: SubmitHandler<QueryFormInputs> = async () => {
+    console.log(formData)
+    try {
+      setIsLoading(true);
+  
+
+      const res: any = await dispatch(createQuery(formData as any));
+
+      if (res.meta.requestStatus === "fulfilled") {
+         setIsSubmitted(true)
+
+         setFormData({
+    name: '',
+    email: '',
+    subject: 'general',
+    message: ''
+  })
+        
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Error in Query :", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // In a real application, you would handle form submission here
+  //   console.log('Form submitted:', formData);
+  //   setIsSubmitted(true);
+    
+  //   // Reset form after 3 seconds
+  //   setTimeout(() => {
+  //     setIsSubmitted(false);
+  //     setFormData({
+  //       name: '',
+  //       email: '',
+  //       subject: 'general',
+  //       message: ''
+  //     });
+  //   }, 3000);
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -133,7 +183,7 @@ export default function ContactPage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Name Field */}
                     <div>
@@ -218,9 +268,15 @@ export default function ContactPage() {
                     type="submit"
                     className="w-full py-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group"
                   >
-                    <Send className="w-5 h-5" />
-                    Send Message
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+
+
+                   {isLoading ? <div className='flex items-center justify-center gap-2'>
+
+                    <ButtonLoader/> Sending
+                   </div> :<>        <Send className="w-5 h-5" />
+                 Send Message
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>} 
+            
                   </button>
                 </form>
               )}
