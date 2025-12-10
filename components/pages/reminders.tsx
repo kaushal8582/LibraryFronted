@@ -22,91 +22,98 @@ export function Reminders() {
     <div>
       <Header title="Reminder Settings" subtitle="Manage when and how you send automated reminders to students." />
 
-      <div className="p-8 space-y-8">
+      <div className="p-2 md:p-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Settings Panel */}
           <div className="lg:col-span-2 space-y-6">
             {/* Channels */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-6">Channels</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900">
-                      <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">Email Reminders</p>
-                      <p className="text-sm text-muted-foreground">Send reminders to student's registered email.</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => dispatch(toggleEmailReminders())}
-                    className={`w-12 h-6 rounded-full transition-colors ${
-                      settings.emailReminders ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                        settings.emailReminders ? "translate-x-6" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </div>
+           <div className="bg-card rounded-lg border border-border p-4 md:p-6">
+  <h3 className="text-lg font-semibold text-foreground mb-6 max-sm:mb-4">Channels</h3>
+  <div className="space-y-3 md:space-y-4">
+    {/* Email Reminders */}
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg bg-secondary/50 gap-3 sm:gap-0">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900 shrink-0">
+          <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-foreground text-sm sm:text-base">Email Reminders</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            Send reminders to student's registered email.
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={() => dispatch(toggleEmailReminders())}
+        className={`w-12 h-6 rounded-full transition-colors self-end sm:self-auto ${
+          settings.emailReminders ? "bg-blue-600" : "bg-gray-300"
+        }`}
+      >
+        <div
+          className={`w-5 h-5 rounded-full bg-white transition-transform ${
+            settings.emailReminders ? "translate-x-6" : "translate-x-0.5"
+          }`}
+        />
+      </button>
+    </div>
 
-                <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900">
-                      <MessageSquare className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">SMS Reminders</p>
-                      <p className="text-sm text-muted-foreground">
-                        Send reminders via text message (charges may apply).
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                  disabled={true}
-                    onClick={() => dispatch(toggleSmsReminders())}
-                    className={`w-12 h-6 rounded-full transition-colors ${
-                      settings.smsReminders ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                        settings.smsReminders ? "translate-x-6" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </div>
+    {/* SMS Reminders */}
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg bg-secondary/50 gap-3 sm:gap-0">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900 shrink-0">
+          <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-foreground text-sm sm:text-base">SMS Reminders</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            Send reminders via text message (charges may apply).
+          </p>
+        </div>
+      </div>
+      <button
+        disabled={true}
+        onClick={() => dispatch(toggleSmsReminders())}
+        className={`w-12 h-6 rounded-full transition-colors self-end sm:self-auto ${
+          settings.smsReminders ? "bg-blue-600" : "bg-gray-300"
+        }`}
+      >
+        <div
+          className={`w-5 h-5 rounded-full bg-white transition-transform ${
+            settings.smsReminders ? "translate-x-6" : "translate-x-0.5"
+          }`}
+        />
+      </button>
+    </div>
 
-                <div  className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900">
-                      <MessageCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">WhatsApp Reminders</p>
-                      <p className="text-sm text-muted-foreground">Reach students directly on WhatsApp.</p>
-                    </div>
-                  </div>
-                  <button
-                  disabled={true}
-                    onClick={() => dispatch(toggleWhatsappReminders())}
-                    className={`w-12 h-6 rounded-full transition-colors ${
-                      settings.whatsappReminders ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                        settings.whatsappReminders ? "translate-x-6" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
+    {/* WhatsApp Reminders */}
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg bg-secondary/50 gap-3 sm:gap-0">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900 shrink-0">
+          <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-foreground text-sm sm:text-base">WhatsApp Reminders</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            Reach students directly on WhatsApp.
+          </p>
+        </div>
+      </div>
+      <button
+        disabled={true}
+        onClick={() => dispatch(toggleWhatsappReminders())}
+        className={`w-12 h-6 rounded-full transition-colors self-end sm:self-auto ${
+          settings.whatsappReminders ? "bg-blue-600" : "bg-gray-300"
+        }`}
+      >
+        <div
+          className={`w-5 h-5 rounded-full bg-white transition-transform ${
+            settings.whatsappReminders ? "translate-x-6" : "translate-x-0.5"
+          }`}
+        />
+      </button>
+    </div>
+  </div>
+</div>
 
             {/* Frequency & Timing */}
             <div className="bg-card rounded-lg border border-border p-6">
