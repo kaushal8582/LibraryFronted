@@ -8,7 +8,11 @@ import { Pencil, Upload } from "lucide-react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { AccountInfo, getRazorpayInfo, updateAccount } from "@/lib/slices/settingsSlice";
+import {
+  AccountInfo,
+  getRazorpayInfo,
+  updateAccount,
+} from "@/lib/slices/settingsSlice";
 import toast from "react-hot-toast";
 import { Card } from "../ui/card";
 import LibraryGallery from "../LibraryGalleryImg";
@@ -19,36 +23,39 @@ import HeroImageUploader from "../HeroImageUploader";
 import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
 import Loader from "../loaders/Loader";
 import SkeletonLoader from "../loaders/SkeletonLoaders";
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { fetchCurrentUser } from "@/lib/slices/authSlice";
 import paymentService from "@/lib/services/paymentService";
 
-
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
-  const { razorpay,isLoading : razorpayLoading } = useSelector(
+  const { razorpay, isLoading: razorpayLoading } = useSelector(
     (state: RootState) => state.settings
   );
   const { userFullData } = useSelector((state: RootState) => state.auth);
   const { isProfilePhotoUploaded } = useSelector(
     (state: RootState) => state.students
   );
-  
+
   const stripAccPrefix = (v: string) => (v || "").replace(/^acc_/, "");
   const ensureAccPrefix = (v: string) => {
     const trimmed = (v || "").trim();
     return trimmed.startsWith("acc_") ? trimmed : `acc_${trimmed}`;
   };
 
-  const [razorPayInfo,setRazorPayInfo] = useState({
+  const [razorPayInfo, setRazorPayInfo] = useState({
     apiKey: razorpay?.razorPayKey || "",
     apiSecret: razorpay?.razorPaySecret || "",
     webhookSecret: razorpay?.razorPayWebhookSecret || "",
     // Store only the suffix in state; UI shows fixed acc_ prefix
     accountId: stripAccPrefix(razorpay?.razorPayAccountId || ""),
+    isVerifiedRazorPay: razorpay?.isVerifiedRazorPay || false,
   });
-
- 
 
   useEffect(() => {
     setRazorPayInfo({
@@ -57,10 +64,9 @@ export function Settings() {
       webhookSecret: razorpay?.razorPayWebhookSecret || "",
       // When loading from server, strip fixed acc_ prefix for editing
       accountId: stripAccPrefix(razorpay?.razorPayAccountId || ""),
+      isVerifiedRazorPay: razorpay?.isVerifiedRazorPay || false,
     });
-  }, [ razorpay]);
-
-
+  }, [razorpay]);
 
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     name: userFullData?.libraryData?.name || "",
@@ -70,7 +76,7 @@ export function Settings() {
     userName: userFullData?.name || "",
     profileImg: userFullData?.avtar || "",
     aboutLibrary: userFullData?.libraryData?.aboutLibrary || "",
-    bio : userFullData?.bio
+    bio: userFullData?.bio,
   });
 
   useEffect(() => {
@@ -82,7 +88,7 @@ export function Settings() {
       userName: userFullData?.name || "",
       profileImg: userFullData?.avtar || "",
       aboutLibrary: userFullData?.libraryData?.aboutLibrary || "",
-      bio : userFullData?.bio || "",
+      bio: userFullData?.bio || "",
     });
   }, [userFullData]);
 
@@ -90,7 +96,7 @@ export function Settings() {
 
   const handleUpdateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(accountInfo?.address===""){
+    if (accountInfo?.address === "") {
       toast.error("Please add your address");
       return;
     }
@@ -112,18 +118,16 @@ export function Settings() {
     }
   };
 
-
   const saveRazorPayInfo = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-
-      const payload ={
-        razorPayWebhookSecret : razorPayInfo.webhookSecret,
-        razorPaySecret : razorPayInfo.apiSecret,
-        razorPayKey : razorPayInfo.apiKey,
+      const payload = {
+        razorPayWebhookSecret: razorPayInfo.webhookSecret,
+        razorPaySecret: razorPayInfo.apiSecret,
+        razorPayKey: razorPayInfo.apiKey,
         // Always save with the required acc_ prefix
-        razorPayAccountId : ensureAccPrefix(razorPayInfo.accountId),
-      }
+        razorPayAccountId: ensureAccPrefix(razorPayInfo.accountId),
+      };
 
       setIsLoading(true);
       const response = await dispatch(
@@ -139,25 +143,17 @@ export function Settings() {
     } catch (error) {
       setIsLoading(false);
       console.error("Failed to update razorpay info:", error);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
-
   };
 
-
-
   useEffect(() => {
-      try {
-        console.log("library id",userFullData?.libraryId)
-        dispatch(getRazorpayInfo(userFullData?.libraryId || ""));
-      } catch (error) {
-        
-      }
-  }, [userFullData?.libraryId])
-
-
-
+    try {
+      console.log("library id", userFullData?.libraryId);
+      dispatch(getRazorpayInfo(userFullData?.libraryId || ""));
+    } catch (error) {}
+  }, [userFullData?.libraryId]);
 
   const handelProfileImgUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -176,54 +172,46 @@ export function Settings() {
     }
   };
 
-
-    async function handlePayment() {
+  async function handlePayment() {
     try {
-      
       const res: any = await paymentService.testPayment({
         amount: 500,
         studentId: userFullData?._id || "",
         libraryId: userFullData?.libraryId || "",
       });
 
-      console.log("res",res)
+      console.log("res", res);
 
       if (!res?.razorpayOrder?.id) {
         toast.error("Failed to create payment order");
         return;
       }
 
-      let key ="";
-      if(res?.razorpayOrder?.fromDB){
+      let key = "";
+      if (res?.razorpayOrder?.fromDB) {
         key = res.razorpayOrder.key;
-      }else{
+      } else {
         key = res.razorpayOrder.notes.key;
       }
-      
+
       paymentService.initializeRazorpay(
         res.razorpayOrder.id, // Razorpay order ID
         res.razorpayOrder.amount, // Amount in paise
         userFullData?.name || "Student", // Prefill name
         userFullData?.email || "student@example.com", // Prefill email
         userFullData?.phone || "9999999999", // Prefill phone
-        key, 
+        key,
 
-       
         async function onSuccess(response) {
           console.log("✅ Payment successful:", response);
           try {
-
-
             const verifyRes = await paymentService.verifyPayment(
               response.razorpay_payment_id,
               response.razorpay_order_id,
               response.razorpay_signature
             );
 
-           
             dispatch(fetchCurrentUser());
-
-          
           } catch (error) {
             console.error("Verification error:", error);
             toast.error("Error verifying payment");
@@ -242,12 +230,6 @@ export function Settings() {
     }
   }
 
-
-
-
-
-
-
   return (
     <div>
       <Header
@@ -258,18 +240,20 @@ export function Settings() {
       <div className="p-8 space-y-8 max-w-4xl">
         {/* Razorpay Integration */}
 
-        {
-          !razorpayLoading ? <SkeletonLoader type="text"/> : (  <div className="bg-card rounded-lg border border-border p-6">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">
-                Razorpay Integration
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Connect your Razorpay account to accept payments.
-              </p>
-            </div>
-            {/* <button
+        {!razorpayLoading ? (
+          <SkeletonLoader type="text" />
+        ) : (
+          <div className="bg-card rounded-lg border border-border p-6">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Razorpay Integration
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Connect your Razorpay account to accept payments.
+                </p>
+              </div>
+              {/* <button
               // onClick={() => setIsRazorpayEnabled(!isRazorpayEnabled)}
               className={`w-12 h-6 rounded-full transition-colors ${
                 1 ? "bg-blue-600" : "bg-gray-300"
@@ -281,92 +265,114 @@ export function Settings() {
                 }`}
               />
             </button> */}
-            <Button isLoading={isLoading} onClick={saveRazorPayInfo} className="bg-blue-600 hover:bg-blue-700">
-            Save Changes
-          </Button>
-          </div>
+              <Button
+                isLoading={isLoading}
+                onClick={saveRazorPayInfo}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Save Changes
+              </Button>
+            </div>
 
-          <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                API Key
-              </label>
-              <input
-                type="text"
-                value={razorPayInfo.apiKey}
-                onChange={(e) => setRazorPayInfo({ ...razorPayInfo, apiKey: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                API Secret
-              </label>
-              <input
-                type="text"
-                value={razorPayInfo.apiSecret}
-                onChange={(e) => setRazorPayInfo({ ...razorPayInfo, apiSecret: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                RazorPay webhook secret
-              </label>
-              <input
-                type="text"
-                value={razorPayInfo.webhookSecret}
-                onChange={(e) => setRazorPayInfo({ ...razorPayInfo, webhookSecret: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                RazorPay Account Id
-              </label>
-              <InputGroup className="bg-secondary">
-                <InputGroupAddon>
-                  <InputGroupText>acc_</InputGroupText>
-                </InputGroupAddon>
-                <InputGroupInput
+            <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  API Key
+                </label>
+                <input
                   type="text"
-                  value={razorPayInfo.accountId}
+                  value={razorPayInfo.apiKey}
                   onChange={(e) =>
-                    setRazorPayInfo({ ...razorPayInfo, accountId: e.target.value })
+                    setRazorPayInfo({ ...razorPayInfo, apiKey: e.target.value })
                   }
-                  placeholder="Enter your Razorpay account ID"
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-              </InputGroup>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  API Secret
+                </label>
+                <input
+                  type="text"
+                  value={razorPayInfo.apiSecret}
+                  onChange={(e) =>
+                    setRazorPayInfo({
+                      ...razorPayInfo,
+                      apiSecret: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  RazorPay webhook secret
+                </label>
+                <input
+                  type="text"
+                  value={razorPayInfo.webhookSecret}
+                  onChange={(e) =>
+                    setRazorPayInfo({
+                      ...razorPayInfo,
+                      webhookSecret: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  RazorPay Account Id
+                </label>
+                <InputGroup className="bg-secondary">
+                  <InputGroupAddon>
+                    <InputGroupText>acc_</InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    type="text"
+                    value={razorPayInfo.accountId}
+                    onChange={(e) =>
+                      setRazorPayInfo({
+                        ...razorPayInfo,
+                        accountId: e.target.value,
+                      })
+                    }
+                    placeholder="Enter your Razorpay account ID"
+                  />
+                </InputGroup>
+              </div>
             </div>
 
-          
+            <div className="w-full my-4 flex items-center justify-between gap-6 mx-auto text-center md:text-left">
+              {/* Left Section */}
 
+              {/* Right Section */}
+
+              {razorpay?.isVerifiedRazorPay ? (
+                <div className="text-2xl font-bold text-green-600">
+                  Verified
+                </div>
+              ) : (
+                <div className="text-2xl font-bold text-red-600">
+                  Not Verified
+                </div>
+              )}
+
+              {razorpay?.isVerifiedRazorPay ? (
+                ""
+              ) : (
+                <Button
+                  isLoading={isLoading}
+                  onClick={handlePayment}
+                  className="px-8 bg-linear-to-bl from-blue-500 to-blue-800 cursor-pointer"
+                >
+                  Verify
+                </Button>
+              )}
+            </div>
           </div>
+        )}
 
-
- <div className="w-full my-4 flex items-center justify-between gap-6 mx-auto text-center md:text-left">
-
-  {/* Left Section */}
-  <div>
-    <h3 className="text-xl font-semibold mb-2 text-gray-500">Test Payment Amount</h3>
-    <div className="text-4xl font-bold text-blue-600">₹1.00</div>
-    <p className="text-muted-foreground mt-2">
-      This amount receive in your razorpay account
-    </p>
-  </div>
-
-  {/* Right Section */}
-  <Button isLoading={isLoading} onClick={handlePayment} className="px-8 bg-linear-to-bl from-blue-500 to-blue-800 cursor-pointer">
-    Pay & Test
-  </Button>
-</div>
-       
-        </div>)
-        }
-      
         {/* header img */}
         <HeroImageUploader
           value={userFullData}

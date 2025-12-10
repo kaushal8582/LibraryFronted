@@ -21,6 +21,7 @@ interface RazorpayIntegration {
   razorPaySecret: string;
   razorPayWebhookSecret: string;
   razorPayAccountId: string;
+  isVerifiedRazorPay: boolean;
 }
 
 interface SubscriptionInfo {
