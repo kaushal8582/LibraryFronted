@@ -5,7 +5,7 @@ import paymentsReducer from "./slices/paymentsSlice"
 import remindersReducer from "./slices/remindersSlice"
 import settingsReducer from "./slices/settingsSlice"
 import authReducer from "./slices/authSlice"
-
+import queryReducer from "./slices/querySlice"
 
 
 export const store = configureStore({
@@ -16,6 +16,8 @@ export const store = configureStore({
     reminders: remindersReducer,
     settings: settingsReducer,
     auth: authReducer,
+    query: queryReducer,
+
   },
 })
 
