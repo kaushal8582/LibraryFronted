@@ -138,7 +138,7 @@ export default function LibraryDetailsPage() {
                     <div className="flex items-center gap-2">
                       <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                       <span className="text-white font-semibold">
-                        {libraryDetails?.avgRating}/5.0
+                        {libraryDetails?.avgRating?.toFixed(1)}/5.0
                       </span>
                       <span className="text-white/70">
                         ({libraryDetails?.totalReviews} reviews)

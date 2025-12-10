@@ -24,14 +24,12 @@ const MainPage = () => {
   //     await dispatch(fetchCurrentUser());
   //   };
 
-    
   //   fetchUser();
   // }, [dispatch]);
-  
-  useEffect(()=>{
-    
-    console.log("usr full dat",userFullData);
-  },[])
+
+  useEffect(() => {
+    console.log("usr full dat", userFullData);
+  }, []);
 
   if (isLoading) {
     return (
@@ -45,15 +43,15 @@ const MainPage = () => {
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-
-
-
-
-<Dashboard />
-
-
-        
-        
+        {userFullData?.role === "librarian" ? (
+          <Dashboard />
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <h1 className="text-xl font-semibold">
+              loading...
+            </h1>
+          </div>
+        )}
       </main>
     </div>
   );

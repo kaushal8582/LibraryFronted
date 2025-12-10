@@ -56,7 +56,7 @@ export function Sidebar() {
       return [
         "/dashboard",
         "/",
-
+ 
         "/dashboard/students",
         "/dashboard/payments",
         "/dashboard/reminders",

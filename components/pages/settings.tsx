@@ -20,6 +20,8 @@ import { uploadImageGlobal } from "@/lib/slices/studentsSlice";
 import Loader from "../loaders/Loader";
 import SkeletonLoader from "../loaders/SkeletonLoaders";
 import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from "@/components/ui/input-group";
+import { fetchCurrentUser } from "@/lib/slices/authSlice";
+import paymentService from "@/lib/services/paymentService";
 
 
 export function Settings() {
@@ -143,7 +145,7 @@ export function Settings() {
 
   };
 
-  console.log("userfull data",userFullData)
+
 
   useEffect(() => {
       try {
@@ -173,6 +175,78 @@ export function Settings() {
       });
     }
   };
+
+
+    async function handlePayment() {
+    try {
+      
+      const res: any = await paymentService.testPayment({
+        amount: 500,
+        studentId: userFullData?._id || "",
+        libraryId: userFullData?.libraryId || "",
+      });
+
+      console.log("res",res)
+
+      if (!res?.razorpayOrder?.id) {
+        toast.error("Failed to create payment order");
+        return;
+      }
+
+      let key ="";
+      if(res?.razorpayOrder?.fromDB){
+        key = res.razorpayOrder.key;
+      }else{
+        key = res.razorpayOrder.notes.key;
+      }
+      
+      paymentService.initializeRazorpay(
+        res.razorpayOrder.id, // Razorpay order ID
+        res.razorpayOrder.amount, // Amount in paise
+        userFullData?.name || "Student", // Prefill name
+        userFullData?.email || "student@example.com", // Prefill email
+        userFullData?.phone || "9999999999", // Prefill phone
+        key, 
+
+       
+        async function onSuccess(response) {
+          console.log("✅ Payment successful:", response);
+          try {
+
+
+            const verifyRes = await paymentService.verifyPayment(
+              response.razorpay_payment_id,
+              response.razorpay_order_id,
+              response.razorpay_signature
+            );
+
+           
+            dispatch(fetchCurrentUser());
+
+          
+          } catch (error) {
+            console.error("Verification error:", error);
+            toast.error("Error verifying payment");
+          }
+        },
+
+        // ❌ Failure callback
+        function onFailure(error) {
+          console.error("Payment failed or cancelled:", error);
+          toast.error("Payment failed or cancelled");
+        }
+      );
+    } catch (error) {
+      console.error("Payment initiation error:", error);
+      toast.error("Something went wrong while starting payment");
+    }
+  }
+
+
+
+
+
+
 
   return (
     <div>
@@ -285,7 +359,7 @@ export function Settings() {
   </div>
 
   {/* Right Section */}
-  <Button className="px-8 bg-linear-to-bl from-blue-500 to-blue-800 cursor-pointer">
+  <Button isLoading={isLoading} onClick={handlePayment} className="px-8 bg-linear-to-bl from-blue-500 to-blue-800 cursor-pointer">
     Pay & Test
   </Button>
 </div>

@@ -49,6 +49,21 @@ export const paymentService = {
       throw error;
     }
   },
+  async testPayment(paymentData: PaymentData): Promise<CreateOrderResponse> {
+    try {
+      const response = await apiCaller({
+        method: "POST",
+        url: "/payments/test-razorpay-setup",
+        data: paymentData,
+        showError: true,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast.error("Failed to create payment order");
+      throw error;
+    }
+  },
 
   // Verify payment
   async verifyPayment(

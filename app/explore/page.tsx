@@ -345,7 +345,7 @@ export default function ExplorePage() {
                       <div className="absolute top-4 right-4">
                         <Badge variant="secondary" className="gap-1">
                           <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                          {library?.avgRating || 3}
+                          {library?.avgRating?.toFixed(1) || 3}
                         </Badge>
                       </div>
                     </div>
@@ -398,7 +398,7 @@ export default function ExplorePage() {
                           className="group-hover:bg-blue-600 transition-colors"
                         >
                           View Details
-                          <ChevronDown className="w-4 h-4 ml-2 transform group-hover:rotate-90 transition-transform" />
+                          {/* <ChevronDown className="w-4 h-4 ml-2 transform group-hover:rotate-90 transition-transform" /> */}
                         </Button>
                       </div>
                     </CardContent>

@@ -303,7 +303,7 @@ export default function Home() {
 
         <section className="px-4 md:px-8 lg:px-16 py-16 bg-linear-to-b from-white to-gray-50">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+            <div className="flex  justify-between items-center mb-3 md:mb-7">
               <div>
                 <h2 className="text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5 text-center sm:text-left">
                   Featured Libraries
@@ -354,7 +354,7 @@ export default function Home() {
                     <div className="absolute top-4 right-4">
                       <div className="flex items-center gap-1 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full">
                         <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                        <span className="font-semibold">{spot.avgRating}</span>
+                        <span className="font-semibold">{spot.avgRating?.toFixed(1)}</span>
                       </div>
                     </div>
                   </div>
