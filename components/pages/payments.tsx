@@ -82,57 +82,59 @@ export function Payments() {
                 isLoading ? <div className="w-full my-1">
                   <SkeletonLoader type="table" count={6}/>
                 </div> : <>
-               <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-secondary">
-                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Student Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Transaction ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            
-                <tbody>
-              {libraryPayments.map((payment) => (
-                <tr
-                  key={payment._id}
-                  className="border-b border-border hover:bg-secondary/50 transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm font-medium">{payment.user.name}</td>
-                  <td className="px-6 py-4 text-sm font-medium">
-                    ₹{payment.amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">
-                    {payment.razorpayPaymentId}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">
-                    {new Date(payment.paymentDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        payment.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {payment.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody></table>
+             <div className="w-full overflow-x-auto rounded-md border border-border">
+  <table className="w-full min-w-[640px]"> {/* Minimum width for small screens */}
+    <thead>
+      <tr className="border-b border-border bg-secondary">
+        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide sm:px-6">
+          Student Name
+        </th>
+        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide sm:px-6">
+          Amount
+        </th>
+        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide sm:px-6">
+          Transaction ID
+        </th>
+        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide sm:px-6">
+          Date
+        </th>
+        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide sm:px-6">
+          Status
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {libraryPayments.map((payment) => (
+        <tr
+          key={payment._id}
+          className="border-b border-border hover:bg-secondary/50 transition-colors"
+        >
+          <td className="px-4 py-3 text-sm font-medium sm:px-6">{payment.user.name}</td>
+          <td className="px-4 py-3 text-sm font-medium sm:px-6">
+            ₹{payment.amount.toFixed(2)}
+          </td>
+          <td className="px-4 py-3 text-sm text-muted-foreground sm:px-6 truncate max-w-[120px]">
+            {payment.razorpayPaymentId}
+          </td>
+          <td className="px-4 py-3 text-sm text-muted-foreground sm:px-6">
+            {new Date(payment.paymentDate).toLocaleDateString()}
+          </td>
+          <td className="px-4 py-3 text-sm sm:px-6">
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium sm:px-3 ${
+                payment.status === "completed"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-yellow-100 text-yellow-800"
+              }`}
+            >
+              {payment.status}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
                 
                 </>
               }

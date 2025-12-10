@@ -35,6 +35,8 @@ import { getPaymentsByStudent } from "@/lib/slices/paymentsSlice";
 import { formatMongoDate } from "@/common/commonAction";
 import { Header } from "@/components/header";
 
+import StudentSkeleton from "@/components/loaders/StudentSkeleton";
+
 interface Payment {
   _id: string;
   amount: number;
@@ -54,7 +56,7 @@ export default function StudentPayments() {
   const { user, userFullData, isAuthenticated, isLoading } = useSelector(
     (state: RootState) => state.auth
   );
-  const { payments,totalPaid,totalPending,totalAmount } = useSelector(
+  const { payments,totalPaid,totalPending,totalAmount,isLoading:paymentsLoading } = useSelector(
     (state: RootState) => state.payments
   );
   // const [payments, setPayments] = useState<Payment[]>([]);
@@ -111,6 +113,9 @@ export default function StudentPayments() {
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
+
+
+
       <main className="flex-1 overflow-auto">
         <div className=" space-y-6">
           {/* <div className="flex justify-between items-center">
@@ -129,7 +134,9 @@ export default function StudentPayments() {
           <Header title="Payment History" subtitle="View all your payment transactions and history" />
 
         
-          <div className="p-6 space-y-6">
+
+        {
+ paymentsLoading ? <StudentSkeleton/> :<div className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="pb-3">
@@ -244,10 +251,22 @@ export default function StudentPayments() {
           </Card>
           </div>
 
+        }
+          
+
           {/* Summary Card */}
           
         </div>
       </main>
+  
+     
+
+
+
+           
+         
+
+
     </div>
   );
 }
