@@ -20,6 +20,7 @@ interface RazorpayIntegration {
   razorPayKey: string;
   razorPaySecret: string;
   razorPayWebhookSecret: string;
+  razorPayAccountId: string;
 }
 
 interface SubscriptionInfo {

@@ -69,33 +69,40 @@ export default function StudentPayment() {
         libraryId: userFullData?.libraryId || "",
       });
 
-      // console.log("🧾 Order created successfully:", res);
+      console.log("🧾 Order created successfully:", res);
 
       if (!res?.razorpayOrder?.id) {
         toast.error("Failed to create payment order");
         return;
       }
 
-      // 🟡 STEP 2: Initialize Razorpay checkout
-      // --------------------------------------
-      // When order is successfully created, open Razorpay payment window.
-      // The handler defined in initializeRazorpay will get triggered after payment.
+
+      let key ="";
+      if(res?.razorpayOrder?.fromDB){
+        key = res.razorpayOrder.key;
+      }else{
+        key = res.razorpayOrder.notes.key;
+      }
+      
       paymentService.initializeRazorpay(
         res.razorpayOrder.id, // Razorpay order ID
         res.razorpayOrder.amount, // Amount in paise
         userFullData?.name || "Student", // Prefill name
         userFullData?.email || "student@example.com", // Prefill email
         userFullData?.phone || "9999999999", // Prefill phone
+        key, // Prefill phone
 
         // ✅ Success callback
         async function onSuccess(response) {
-          // console.log("✅ Payment successful:", response);
+          console.log("✅ Payment successful:", response);
 
           // 🟢 STEP 3: Verify payment on backend
           // ------------------------------------
           // We call backend again to verify the Razorpay signature.
           // This ensures the payment is genuine and successful.
           try {
+
+
             const verifyRes = await paymentService.verifyPayment(
               response.razorpay_payment_id,
               response.razorpay_order_id,

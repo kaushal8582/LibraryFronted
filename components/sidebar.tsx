@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { useEffect } from "react";
 import { toggleSidebar } from "@/lib/slices/dashboardSlice";
+import { logoutUser } from "@/lib/slices/authSlice";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -26,7 +27,6 @@ export function Sidebar() {
 
   // Define all routes (base)
   const baseLinks = [
-
     { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
     { href: "/", label: "Home", icon: Home },
 
@@ -48,15 +48,14 @@ export function Sidebar() {
         "/student/dashboard",
         "/student/payments",
         "/student/payment",
-        "/"
-        
+        "/",
       ].includes(link.href);
     }
     if (role === "librarian") {
       // librarian has full access except /student
       return [
         "/dashboard",
-  "/",
+        "/",
 
         "/dashboard/students",
         "/dashboard/payments",
@@ -74,12 +73,15 @@ export function Sidebar() {
 
   const router = useRouter();
 
-
-  const handleLogout = ()=>{
-          localStorage.removeItem("accessToken");
-          localStorage.clear();
-          router.push("/")
-  }
+  const handleLogout = async() => {
+    localStorage.removeItem("accessToken");
+    localStorage.clear();
+    router.push("/");
+   const res = await dispatch(logoutUser())
+   if(res.meta.requestStatus === "fulfilled"){
+    router.push("/");
+   }
+  };
 
   // Only redirect once when role is first loaded and we're not on a valid route
   useEffect(() => {
@@ -93,24 +95,23 @@ export function Sidebar() {
       "/",
     ];
     const validLibrarianRoutes = [
-  "/dashboard",
-  "/",
+      "/dashboard",
+      "/",
 
-  "/dashboard/students",
-  "/dashboard/payments",
-  "/dashboard/reminders",
-  "/dashboard/settings",
-];
+      "/dashboard/students",
+      "/dashboard/payments",
+      "/dashboard/reminders",
+      "/dashboard/settings",
+    ];
 
-const isLibrarianValid =
-  validLibrarianRoutes.includes(pathname) ||
-  pathname.startsWith("/dashboard/students/"); 
-  
+    const isLibrarianValid =
+      validLibrarianRoutes.includes(pathname) ||
+      pathname.startsWith("/dashboard/students/");
 
-const isOnValidRoute =
-  (role === "student" && validStudentRoutes.includes(pathname)) ||
-  (role === "librarian" && isLibrarianValid) ||
-  (role === "admin" && pathname !== "/auth/login");
+    const isOnValidRoute =
+      (role === "student" && validStudentRoutes.includes(pathname)) ||
+      (role === "librarian" && isLibrarianValid) ||
+      (role === "admin" && pathname !== "/auth/login");
 
     // Only redirect if we're not on a valid route for this role
     if (!isOnValidRoute) {
@@ -123,16 +124,14 @@ const isOnValidRoute =
     }
   }, [role, pathname]); // Add pathname to dependencies
 
-
   return (
     <div
-  className={` md:flex w-64 border-r border-border bg-sidebar p-6 flex-col ${
-    sidebarOpen
-      ? "block absolute top-0 left-0 h-screen z-50"
-      : "hidden relative"
-  }`}
->
-
+      className={` md:flex w-64 border-r border-border bg-sidebar p-6 flex-col ${
+        sidebarOpen
+          ? "block absolute top-0 left-0 h-screen z-50"
+          : "hidden relative"
+      }`}
+    >
       {/* ---- Logo Section ---- */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3 ">
@@ -170,7 +169,6 @@ const isOnValidRoute =
 
       {/* ---- Navigation Links ---- */}
       <nav className="flex-1 space-y-2">
-
         {links.map((link) => {
           const isActive = pathname === link.href;
           const Icon = link.icon;

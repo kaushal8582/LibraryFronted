@@ -82,6 +82,7 @@ export const paymentService = {
     studentName: string,
     studentEmail: string,
     studentPhone: string,
+    key: string,  
     onSuccess: (response: RazorpayResponse) => void,
     onFailure: (error: any) => void
   ): void {
@@ -91,7 +92,7 @@ export const paymentService = {
     }
 
     const options = {
-      key: "rzp_test_Rdbi98blsEHi1e", // Replace with your key
+      key: key, 
       amount: amount,
       currency: "INR",
       name: "Library Management System",
