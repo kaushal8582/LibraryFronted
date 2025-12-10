@@ -52,7 +52,6 @@ export interface PaymentRecord {
   };
 }
 
-
 interface PaymentState {
   payments: Payment[];
   filteredPayments: Payment[];

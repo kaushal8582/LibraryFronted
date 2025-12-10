@@ -36,24 +36,32 @@ export function Students() {
   const isMobile = useMediaQuery("(max-width:600px)");
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { filteredStudents, searchQuery,isLoading } = useSelector(
+  const { filteredStudents, searchQuery, isLoading } = useSelector(
     (state: RootState) => state.students
   );
   const [search, setSearch] = useState("");
   const [isAction, setIsAction] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const debounceSearchValue = useDebounce(search, 500);
 
   const handleSearch = (value: string) => {
     setSearch(value);
+    if (value.trim()) {
+      setIsSearching(true);
+    }
   };
 
   const queryParams = new URLSearchParams();
 
   useEffect(() => {
     queryParams.append("search", debounceSearchValue);
-    dispatch(getStudents(queryParams.toString()));
+    dispatch(getStudents(queryParams.toString())).finally(() => {
+      setIsSearching(false);
+    });
   }, [dispatch, debounceSearchValue, isAction]);
+
+  const showLoader = isLoading || isSearching;
 
   return (
     <div>
@@ -107,95 +115,111 @@ export function Students() {
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
-        
-            <TableBody>
-             
-              {filteredStudents.map((student) => (
-                <TableRow
-                  key={student._id}
-                  onClick={() => router.push(`/dashboard/students/${student.user?._id}`)}
-                  className="cursor-pointer"
-                >
-                  <TableCell className="font-medium">
-                    {capitalizeFirstChar(student?.user?.name || "")}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {student?.user?.email || ""}
-                  </TableCell>
-                  <TableCell>
-                    {formatMongoDate(student?.joinDate || "")}
-                  </TableCell>
-                  <TableCell>₹{student.fee} / mo</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        student.status === "active"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-                      }`}
-                    >
-                      {student.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          style={{
-                            height: "40px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontWeight: 500,
-                          }}
-                          onClick={() =>
-                            router.push(`/students/${student.user?._id}`)
-                          }
-                        >
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <EditStudentModel
-                              student={student}
-                              setIsAction={setIsAction}
-                            />
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <AddCashPaymentModal
-                              studentId={student.user?._id}
-                              setIsAction={setIsAction}
-                            />
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <DeleteStudentDialog
-                            studentId={student._id}
-                            setIsAction={setIsAction}
-                          />
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+            
+            {/* Show loader OR table content */}
+            {showLoader ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center ">
+                    <div className="w-full my-1">
+                      <SkeletonLoader type="table" count={6} />
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {filteredStudents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center p-8">
+                      <div className="text-muted-foreground">
+                        No students found
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredStudents.map((student) => (
+                    <TableRow
+                      key={student._id}
+                      onClick={() => router.push(`/dashboard/students/${student.user?._id}`)}
+                      className="cursor-pointer"
+                    >
+                      <TableCell className="font-medium">
+                        {capitalizeFirstChar(student?.user?.name || "")}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {student?.user?.email || ""}
+                      </TableCell>
+                      <TableCell>
+                        {formatMongoDate(student?.joinDate || "")}
+                      </TableCell>
+                      <TableCell>₹{student.fee} / mo</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            student.status === "active"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                              : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                          }`}
+                        >
+                          {student.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
 
-               {
-                isLoading && filteredStudents.length == 0 && <div className="w-full my-1">
-                  <SkeletonLoader type="table" count={6}/>
-                </div>
-              }
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              style={{
+                                height: "40px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontWeight: 500,
+                              }}
+                              onClick={() =>
+                                router.push(`/students/${student.user?._id}`)
+                              }
+                            >
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <EditStudentModel
+                                  student={student}
+                                  setIsAction={setIsAction}
+                                />
+                              </div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <AddCashPaymentModal
+                                  studentId={student.user?._id}
+                                  setIsAction={setIsAction}
+                                />
+                              </div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <DeleteStudentDialog
+                                studentId={student._id}
+                                setIsAction={setIsAction}
+                              />
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            )}
+          </Table>
         </div>
       </div>
     </div>
