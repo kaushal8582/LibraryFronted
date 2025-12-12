@@ -172,7 +172,11 @@ export function EditStudentModel({
             )}
           </div>
 
-          {/* Status */}
+
+
+          <div className="grid grid-cols-2">
+
+              {/* Status */}
           <div className="flex flex-col w-full gap-2">
             <Label htmlFor="status">Status</Label>
             <Select
@@ -206,6 +210,9 @@ export function EditStudentModel({
               </p>
             )}
           </div>
+          </div>
+
+        
           <div className="flex flex-col gap-2">
             <Label htmlFor="joinDate">Joining Date</Label>
             <Input type="date" id="joinDate" {...register("joinDate")} />

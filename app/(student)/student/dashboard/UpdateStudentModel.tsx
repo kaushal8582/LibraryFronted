@@ -10,6 +10,7 @@ import { AppDispatch } from "@/lib/store";
 import { useDispatch } from "react-redux";
 import { editStudent } from "@/lib/slices/studentsSlice";
 import toast from "react-hot-toast";
+import ButtonLoader from "@/components/loaders/ButtonLoader";
 
 interface Props {
   open: boolean;
@@ -26,6 +27,7 @@ export default function StudentModal({
 }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoading,setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: value?.name || "",
     phone: value?.phone || "",
@@ -53,6 +55,7 @@ export default function StudentModal({
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true)
     const formDataState = new FormData();
     formDataState.append("name", formData.name);
     formDataState.append("phone", formData.phone);
@@ -68,11 +71,17 @@ export default function StudentModal({
 
       if (res.meta.requestStatus === "fulfilled") {
         toast.success(" updated successfully");
+          setIsLoading(false)
         onClose();
       } else {
         toast.error("Failed to update student");
+          setIsLoading(false)
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }finally{
+        setIsLoading(false)
+    }
     onClose();
   };
 
@@ -154,9 +163,12 @@ export default function StudentModal({
 
         <Button
           onClick={handleSubmit}
+          disabled={isLoading}
           className="w-full bg-blue-600 hover:bg-blue-700"
         >
-          Save
+
+          {isLoading ? <ButtonLoader/> : "Save"}
+          
         </Button>
       </div>
     </div>

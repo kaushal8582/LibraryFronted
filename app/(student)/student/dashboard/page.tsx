@@ -23,12 +23,13 @@ import {
   Phone,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import { updatePassword } from "@/lib/slices/authSlice";
+import { fetchCurrentUser, updatePassword } from "@/lib/slices/authSlice";
 import toast from "react-hot-toast";
 import { Header } from "@/components/header";
 import { Pencil } from "lucide-react";
 import StudentModal from "./UpdateStudentModel";
 import { formatMongoDate } from "@/common/commonAction";
+import StudentProfileLoader from "@/components/loaders/StudentProfileLoader";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -42,13 +43,22 @@ export default function StudentDashboard() {
     (state: RootState) => state.auth
   );
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+
+ 
+
+
+
+  const handleCloseModel = async()=>{
+    setEditProfile(false);
+    await dispatch(fetchCurrentUser())
+
   }
+
+
+
+
+ 
+
 
   // if (!isAuthenticated || !userFullData) {
   //   return null;
@@ -98,7 +108,9 @@ export default function StudentDashboard() {
           </div> */}
           <Header title="Dashboard" />
 
-          <div className="p-6 space-y-6">
+
+          {
+            isLoading ? <StudentProfileLoader/> : <div className="p-6 space-y-6">
             {/* Personal Information Card */}
             <Card className="relative">
               <div
@@ -356,10 +368,13 @@ export default function StudentDashboard() {
             <StudentModal
               open={editProfile}
               value={studentData}
-              onClose={() => setEditProfile(false)}
+              onClose={handleCloseModel}
               onSubmit={() => {}}
             />
           </div>
+          }
+
+          
         </div>
       </main>
     </div>

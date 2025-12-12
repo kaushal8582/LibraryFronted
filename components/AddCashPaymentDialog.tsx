@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import { makePaymentInCash } from "@/lib/slices/paymentsSlice";
+import ButtonLoader from "./loaders/ButtonLoader";
 
 
 const cashPaymentSchema = Joi.object({
@@ -40,7 +41,7 @@ export function AddCashPaymentModal({
 }) {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
-
+  const [isLoading,setIsLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -55,6 +56,7 @@ export function AddCashPaymentModal({
   });
 
   const onSubmit = async (data: any) => {
+    setIsLoading(true)
     const payload = {
       paymentDate: data.paymentDate,
       numberOfMonths: Number(data.numberOfMonths),
@@ -65,11 +67,15 @@ export function AddCashPaymentModal({
 
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("Cash payment completed");
+    setIsLoading(false)
+
       setIsAction(true);
       setOpen(false);
       reset();
     } else {
       toast.error("Failed to process cash payment");
+    setIsLoading(false)
+
     }
   };
 
@@ -118,7 +124,9 @@ export function AddCashPaymentModal({
 
           <DialogFooter>
             <Button type="submit" className="w-full">
-              Add Payment
+
+              {isLoading ? <ButtonLoader/> : "Add payment"}
+         
             </Button>
           </DialogFooter>
         </form>

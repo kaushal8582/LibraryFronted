@@ -85,7 +85,7 @@ const Footer = () => {
           
               <li>
                 <Link 
-                  href="/register" 
+                  href="/auth/register" 
                   className="flex items-center gap-2 hover:text-white transition-colors"
                 >
                   <UserPlus className="w-4 h-4" />
@@ -104,7 +104,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link 
-                  href="/about" 
+                  href="/about-us" 
                   className="flex items-center gap-2 hover:text-white transition-colors"
                 >
                   <Info className="w-4 h-4" />
@@ -113,7 +113,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link 
-                  href="/contact" 
+                  href="/contact-us" 
                   className="flex items-center gap-2 hover:text-white transition-colors"
                 >
                   <Phone className="w-4 h-4" />
