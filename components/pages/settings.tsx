@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/input-group";
 import { fetchCurrentUser } from "@/lib/slices/authSlice";
 import paymentService from "@/lib/services/paymentService";
+import ButtonLoader from "../loaders/ButtonLoader";
 
 export function Settings() {
   const dispatch = useDispatch<AppDispatch>();
@@ -93,6 +94,7 @@ export function Settings() {
   }, [userFullData]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isTesingPayment, setIsTestingPayment] = useState(false);
 
   const handleUpdateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,6 +176,7 @@ export function Settings() {
 
   async function handlePayment() {
     try {
+      setIsTestingPayment(true)
       const res: any = await paymentService.testPayment({
         amount: 500,
         studentId: userFullData?._id || "",
@@ -184,6 +187,8 @@ export function Settings() {
 
       if (!res?.razorpayOrder?.id) {
         toast.error("Failed to create payment order");
+      setIsTestingPayment(false)
+
         return;
       }
 
@@ -227,6 +232,8 @@ export function Settings() {
     } catch (error) {
       console.error("Payment initiation error:", error);
       toast.error("Something went wrong while starting payment");
+    }finally{
+      setIsTestingPayment(false)
     }
   }
 
@@ -244,12 +251,12 @@ export function Settings() {
           <SkeletonLoader type="text" />
         ) : (
           <div className="bg-card rounded-lg border border-border p-6">
-            <div className="flex items-start justify-between mb-6">
+            <div className="md:flex  items-start justify-between mb-6">
               <div>
                 <h3 className="text-lg font-semibold text-foreground">
                   Razorpay Integration
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm max-md:py-2 text-muted-foreground w-full">
                   Connect your Razorpay account to accept payments.
                 </p>
               </div>
@@ -353,7 +360,7 @@ export function Settings() {
                   Verified
                 </div>
               ) : (
-                <div className="text-2xl font-bold text-red-600">
+                <div className="md:text-2xl font-bold text-red-600">
                   Not Verified
                 </div>
               )}
@@ -362,11 +369,15 @@ export function Settings() {
                 ""
               ) : (
                 <Button
-                  isLoading={isLoading}
+
+                disabled={isTesingPayment}
+                 
                   onClick={handlePayment}
                   className="px-8 bg-linear-to-bl from-blue-500 to-blue-800 cursor-pointer"
                 >
-                  Verify
+
+                 {isTesingPayment ?  <div className="flex items-center  justify-center gap-4">Verifying <ButtonLoader/></div> : "Verify"}
+               
                 </Button>
               )}
             </div>

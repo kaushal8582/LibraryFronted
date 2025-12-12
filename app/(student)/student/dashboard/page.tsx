@@ -218,7 +218,7 @@ export default function StudentDashboard() {
                       {studentData?.libraryData?.contactPhone}
                     </p>
                   </div>
-                  <div className="space-y-1">
+                  {/* <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">
                       Subscription Status
                     </p>
@@ -232,7 +232,7 @@ export default function StudentDashboard() {
                     >
                       {studentData?.libraryData?.subscriptionStatus}
                     </Badge>
-                  </div>
+                  </div> */}
                 </div>
               </CardContent>
             </Card>

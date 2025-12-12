@@ -39,6 +39,7 @@ import toast from "react-hot-toast";
 import { formatMongoDate } from "@/common/commonAction";
 import { fetchCurrentUser } from "@/lib/slices/authSlice";
 import { Header } from "@/components/header";
+import ButtonLoader from "@/components/loaders/ButtonLoader";
 
 interface PendingPayment {
   _id: string;
@@ -54,11 +55,13 @@ export default function StudentPayment() {
   const { user, userFullData, isAuthenticated, isLoading } = useSelector(
     (state: RootState) => state.auth
   );
+  const [isCreatingOrder,setIsCreatingOrder] = useState(false)
 
   const dispatch = useDispatch<AppDispatch>();
 
   async function handlePayment() {
     try {
+      setIsCreatingOrder(true)
       // 🟢 STEP 1: Create Razorpay order from backend
       // --------------------------------------------
       // We call our backend API via paymentService.createOrder().
@@ -70,9 +73,13 @@ export default function StudentPayment() {
       });
 
       console.log("🧾 Order created successfully:", res);
+   
+
 
       if (!res?.razorpayOrder?.id) {
         toast.error("Failed to create payment order");
+      setIsCreatingOrder(false)
+
         return;
       }
 
@@ -95,6 +102,7 @@ export default function StudentPayment() {
         // ✅ Success callback
         async function onSuccess(response) {
           console.log("✅ Payment successful:", response);
+             setIsCreatingOrder(false)
 
           // 🟢 STEP 3: Verify payment on backend
           // ------------------------------------
@@ -128,6 +136,7 @@ export default function StudentPayment() {
           } catch (error) {
             console.error("Verification error:", error);
             toast.error("Error verifying payment");
+
           }
         },
 
@@ -135,11 +144,15 @@ export default function StudentPayment() {
         function onFailure(error) {
           console.error("Payment failed or cancelled:", error);
           toast.error("Payment failed or cancelled");
+             setIsCreatingOrder(false)
         }
       );
     } catch (error) {
       console.error("Payment initiation error:", error);
       toast.error("Something went wrong while starting payment");
+         setIsCreatingOrder(false)
+    }finally{
+         setIsCreatingOrder(false)
     }
   }
 
@@ -185,13 +198,16 @@ export default function StudentPayment() {
                 new Date().toISOString().split("T")[0] ? (
                 <button
                   onClick={handlePayment}
+                  disabled={isCreatingOrder}
                   className="w-[250px] mt-4 
              text-white font-semibold py-2 rounded-lg 
              shadow-md hover:shadow-lg hover:-translate-y-0.5 
              transition-all duration-300 ease-in-out 
              focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 cursor-pointer bg-linear-to-tl from-cyan-500 to to-blue-700"
                 >
-                  Make Payment 💳
+
+                  {isCreatingOrder ?  <div className="flex items-center  justify-center gap-4">Processing <ButtonLoader/></div> : "Make Payment 💳"}
+                  
                 </button>
               ) : (
                 <Alert>
