@@ -118,7 +118,7 @@ const GalleryImages = ({ galleryPhotos = defaultImages }: GalleryProps) => {
       )}
 
       {/* Mobile Navigation  */}
-      <div className="flex justify-center gap-4 mt-6 md:hidden">
+      {/* <div className="flex justify-center gap-4 mt-6 md:hidden">
         <button
           onClick={prevImage}
           className="bg-gray-100 hover:bg-gray-200 p-3 rounded-full transition"
@@ -133,7 +133,7 @@ const GalleryImages = ({ galleryPhotos = defaultImages }: GalleryProps) => {
         >
           <ChevronRight className="w-5 h-5" />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

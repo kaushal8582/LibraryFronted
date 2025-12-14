@@ -15,6 +15,7 @@ import {
   Instagram,
   Linkedin
 } from 'lucide-react'
+import { LibTrackLogo1 } from '../logo'
 
 const Footer = () => {
   return (
@@ -24,10 +25,7 @@ const Footer = () => {
           
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-8 h-8 text-blue-400" />
-              <h2 className="text-2xl font-bold text-white">Libtrack</h2>
-            </div>
+            <LibTrackLogo1 />
             <p className="text-gray-400">
               Your gateway to quiet study spaces. Find the perfect environment for 
               focused learning and productivity.

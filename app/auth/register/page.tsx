@@ -48,24 +48,7 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterFormInputs>();
 
-  const password = watch("password");
 
-  const registerMutation = useMutation({
-    mutationFn: async (
-      userData: Omit<RegisterFormInputs, "confirmPassword">
-    ) => {
-      console.log("Sending registration data:", userData);
-      const res = await registerUser(userData);
-      console.log("res", res);
-      return res;
-    },
-    onSuccess: () => {
-      router.push("/auth/login");
-    },
-    onError: (error) => {
-      console.error("Registration failed:", error);
-    },
-  });
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
     const { confirmPassword, ...userData } = data;
@@ -79,6 +62,8 @@ export default function RegisterPage() {
       }
     } catch (error) {
       toast.error("Registration failed. Please try again.");
+      setIsLoading(false);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -214,9 +199,10 @@ export default function RegisterPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={registerMutation.isPending}
+              isLoading={isLoading}
+              disabled={isLoading}
             >
-              {registerMutation.isPending
+              {isLoading
                 ? "Creating Account..."
                 : "Create Account"}
             </Button>

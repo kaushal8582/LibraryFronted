@@ -17,6 +17,7 @@ import { AppDispatch, RootState } from "@/lib/store";
 import { useEffect } from "react";
 import { toggleSidebar } from "@/lib/slices/dashboardSlice";
 import { logoutUser } from "@/lib/slices/authSlice";
+import { LibTrackLogo1 } from "./logo";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -134,14 +135,7 @@ export function Sidebar() {
     >
       {/* ---- Logo Section ---- */}
       <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3 ">
-          <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">L</span>
-          </div>
-          <h1 className="text-xl font-bold text-sidebar-foreground">
-            LibTrack
-          </h1>
-        </div>
+        <LibTrackLogo1 />
         {sidebarOpen && (
           <button
             className="md:hidden  flex  z-50"

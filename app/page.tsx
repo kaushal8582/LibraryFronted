@@ -305,7 +305,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="flex  justify-between items-center mb-3 md:mb-7">
               <div>
-                <h2 className="text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5 text-center sm:text-left">
+                <h2 className="text-[19px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5  md:text-[22px] sm:text-left">
                   Featured Libraries
                 </h2>
                 {/* <p className="text-gray-600">Based on real-time availability and user ratings</p> */}

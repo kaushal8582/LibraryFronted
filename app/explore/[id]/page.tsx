@@ -79,23 +79,14 @@ export default function LibraryDetailsPage() {
     getLibraryDetails();
   }, [id, userFullData?._id, action]);
 
-
-
-
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
       <Nav />
 
-{
-  libraryDetailsLoading && 
-    <Loader />
+      {libraryDetailsLoading && <Loader />}
 
-}
-
-  
-
-{
-  libraryDetails && <div>
+      {libraryDetails && (
+        <div>
           {/* Hero Section with Library Image */}
           <div className="relative h-[500px] overflow-hidden">
             {/* BG Image */}
@@ -127,9 +118,9 @@ export default function LibraryDetailsPage() {
                     {libraryDetails?.name}
                   </h1>
 
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-col md:flex-row  items-start md:items-center  gap-6">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-white/90" />
+                      <MapPin className="w-8 h-8 md:w-5 md:h-5 text-white/90" />
                       <span className="text-white/90">
                         {libraryDetails?.address}
                       </span>
@@ -157,7 +148,7 @@ export default function LibraryDetailsPage() {
                 <div className="flex max-lg:flex-col gap-8">
                   {/* About Section */}
                   <div className="bg-white rounded-2xl shadow-xl p-8 w-full lg:max-w-2/3">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col md:flex-row items-start gap-4 md:items-center justify-between mb-6">
                       <h2 className="text-2xl font-bold text-gray-900">
                         About The Library
                       </h2>
@@ -190,7 +181,7 @@ export default function LibraryDetailsPage() {
 
                     {/* Owner Card */}
                     <div className="bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center flex-col md:flex-row gap-4">
                         <div className="lg:size-12 size-14 bg-linear-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center max-md:mb-4">
                           {libraryDetails?.librarian?.[0]?.avtar ? (
                             <img
@@ -258,13 +249,11 @@ export default function LibraryDetailsPage() {
                         </div>
                         <p className="text-sm text-green-600 mt-1">
                           Closes at{" "}
-                          {libraryDetails?.closingHours ? (
-                            convertToIndianTime(
-                              libraryDetails?.closingHours || ""
-                            )
-                          ) : (
-                            "N/A"
-                          )}{" "}
+                          {libraryDetails?.closingHours
+                            ? convertToIndianTime(
+                                libraryDetails?.closingHours || ""
+                              )
+                            : "N/A"}{" "}
                           PM today
                         </p>
                       </div>
@@ -382,10 +371,7 @@ export default function LibraryDetailsPage() {
             </div>
           </div>
         </div>
-}
-
-        
-   
+      )}
 
       <Footer />
     </div>

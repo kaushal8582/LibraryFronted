@@ -129,7 +129,7 @@ export function EditStudentModel({
       </DialogTrigger>
       <DialogContent
         onClick={(e) => e.stopPropagation()}
-        className="sm:max-w-[450px]"
+        className="sm:max-w-[450px] max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader>
           <DialogTitle>Edit Student</DialogTitle>
@@ -138,7 +138,7 @@ export function EditStudentModel({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pb-4">
           {/* Name */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Name</Label>
@@ -172,47 +172,43 @@ export function EditStudentModel({
             )}
           </div>
 
-
-
           <div className="grid grid-cols-2">
+            {/* Status */}
+            <div className="flex flex-col w-full gap-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={watch("status")}
+                onValueChange={(value) => setValue("status", value)}
+              >
+                <SelectTrigger id="status" className="w-full">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent className="w-full">
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
 
-              {/* Status */}
-          <div className="flex flex-col w-full gap-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={watch("status")}
-              onValueChange={(value) => setValue("status", value)}
-            >
-              <SelectTrigger id="status" className="w-full">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent className="w-full">
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
-              </SelectContent>
-            </Select>
+              {errors.status && (
+                <p className="text-red-500 text-sm">
+                  {String(errors.status.message || "")}
+                </p>
+              )}
+            </div>
 
-            {errors.status && (
-              <p className="text-red-500 text-sm">
-                {String(errors.status.message || "")}
-              </p>
-            )}
+            {/* Fee */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="fee">Fee</Label>
+              <Input id="fee" {...register("fee")} />
+              {errors.fee && (
+                <p className="text-red-500 text-sm">
+                  {String(errors.fee.message || "")}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Fee */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="fee">Fee</Label>
-            <Input id="fee" {...register("fee")} />
-            {errors.fee && (
-              <p className="text-red-500 text-sm">
-                {String(errors.fee.message || "")}
-              </p>
-            )}
-          </div>
-          </div>
-
-        
           <div className="flex flex-col gap-2">
             <Label htmlFor="joinDate">Joining Date</Label>
             <Input type="date" id="joinDate" {...register("joinDate")} />
@@ -264,7 +260,11 @@ export function EditStudentModel({
           </div>
 
           <DialogFooter>
-            <Button type="submit" isLoading={isLoading} className="w-full bg-[#165dfc] text-white">
+            <Button
+              type="submit"
+              isLoading={isLoading}
+              className="w-full bg-[#165dfc] text-white"
+            >
               Save Changes
             </Button>
           </DialogFooter>

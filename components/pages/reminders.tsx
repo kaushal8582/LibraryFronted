@@ -20,7 +20,7 @@ export function Reminders() {
 
   return (
     <div>
-      <Header title="Reminder Settings" subtitle="Manage when and how you send automated reminders to students." />
+      <Header title="Reminder Settings" subtitle="" />
 
       <div className="p-2 md:p-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

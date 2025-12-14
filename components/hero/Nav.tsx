@@ -95,14 +95,17 @@ const Nav = () => {
               <Menu className="w-6 h-6" />
             )}
           </button>
-          <h2
+          {/* <h2
             onClick={() => router.push("/")}
             className=" cursor-pointer text-xl font-bold text-gray-800"
           >
             Libtrack
-          </h2>
-          {/* <LibTrackLogo1/>
-          <LibTrackLogo2/>
+          </h2> */}
+          <div onClick={() => router.push("/")} > 
+          <LibTrackLogo1 />
+
+          </div>
+          {/* <LibTrackLogo2/>
           <LibTrackLogo3/>
           <LibTrackLogo4/> */}
         </div>

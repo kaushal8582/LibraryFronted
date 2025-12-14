@@ -117,6 +117,8 @@ export function Settings() {
     } catch (error) {
       setIsLoading(false);
       console.error("Failed to update account:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -209,18 +211,7 @@ export function Settings() {
 
         async function onSuccess(response) {
           console.log("✅ Payment successful:", response);
-          try {
-            const verifyRes = await paymentService.verifyPayment(
-              response.razorpay_payment_id,
-              response.razorpay_order_id,
-              response.razorpay_signature
-            );
-
-            dispatch(fetchCurrentUser());
-          } catch (error) {
-            console.error("Verification error:", error);
-            toast.error("Error verifying payment");
-          }
+          
         },
 
         // ❌ Failure callback
@@ -417,7 +408,7 @@ export function Settings() {
               }}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              Update Information
+              Update 
             </Button>
           </div>
 

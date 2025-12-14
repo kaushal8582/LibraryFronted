@@ -32,7 +32,7 @@ export function Header({ title, subtitle }: HeaderProps) {
           <div className="flex-1">
             {title && (
               <div className="">
-                <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+                <h1 className="text-xl font-bold text-foreground">{title}</h1>
                 {subtitle && (
                   <p className="text-sm text-muted-foreground mt-1">
                     {subtitle}

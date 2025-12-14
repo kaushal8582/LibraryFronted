@@ -58,9 +58,9 @@ const facilities = [
 export default function ExplorePage() {
   const [open, setOpen] = useState(false); // for sheet (filter dailog)
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState([500, 5000]);
+  const [priceRange, setPriceRange] = useState<any>();
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
-  const [minRating, setMinRating] = useState(4);
+  const [minRating, setMinRating] = useState(0);
   const [openNow, setOpenNow] = useState(true);
   const [location, setLocation] = useState("");
   const isMobile = useIsMobile();
@@ -80,8 +80,8 @@ export default function ExplorePage() {
     const payload = {
       searchText: debounceSearchValue,
       facilities: selectedFacilities,
-      // rating : minRating,
-      feeRange: priceRange[0],
+      rating : minRating,
+      feeRange: priceRange?.[0],
     };
 
     try {
@@ -117,9 +117,9 @@ export default function ExplorePage() {
 
   const clearFilters = () => {
     setSearchQuery("");
-    setPriceRange([500, 5000]);
+    setPriceRange(undefined);
     setSelectedFacilities([]);
-    setMinRating(4);
+    setMinRating(0);
     setOpenNow(true);
     setLocation("");
     if(isMobile) setResetClearFilter(!resetClearFilter);
@@ -157,7 +157,7 @@ export default function ExplorePage() {
           <aside className="lg:w-1/4 hidden md:block">
             <div className="sticky top-14 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-8">
               <FiltersContent
-                priceRange={priceRange}
+                priceRange={priceRange ?? [0, 5000]}
                 setPriceRange={setPriceRange}
                 minRating={minRating}
                 setMinRating={setMinRating}
@@ -203,7 +203,7 @@ export default function ExplorePage() {
                   </SheetHeader>
                   <div className=" space-y-6 px-6">
                     <FiltersContent
-                      priceRange={priceRange}
+                      priceRange={priceRange ?? [0, 5000]}
                       setPriceRange={setPriceRange}
                       minRating={minRating}
                       setMinRating={setMinRating}
@@ -356,10 +356,10 @@ export default function ExplorePage() {
                           <h3 className="text-xl font-bold text-gray-900 mb-1">
                             {truncateText(library.name, 14)}
                           </h3>
-                          <div className="flex items-center text-gray-600 mb-2">
+                          {/* <div className="flex items-center text-gray-600 mb-2">
                             <MapPin className="w-4 h-4 mr-1" />
                             {library.distance}
-                          </div>
+                          </div> */}
                         </div>
                         <div className="text-right flex items-center justify-center">
                           <div className="text-1xl font-bold text-blue-600">
@@ -465,13 +465,13 @@ function FiltersContent({
             min={0}
             max={10000}
             step={100}
-            value={priceRange}
+            value={priceRange ?? [0, 5000]}
             onValueChange={setPriceRange}
             className="my-6"
           />
           <div className="flex justify-between text-sm text-gray-600">
-            <span>₹{priceRange[0]}</span>
-            <span>₹5000</span>
+            <span>₹{priceRange?.[0] ?? 0}</span>
+            {/* <span>₹{priceRange?.[1] ?? 5000}</span> */}
           </div>
         </div>
       </div>

@@ -103,7 +103,7 @@ export default function MembershipPasses({
       <div className="space-y-5">
         {packages.map((pkg, index) => (
           <div key={index} className="grid grid-cols-12 gap-4 items-end">
-            <div className="col-span-6">
+            <div className="col-span-4 md:col-span-5">
               <label className="text-sm text-black">Hours</label>
               <Input
                 value={pkg.hours}
@@ -114,7 +114,7 @@ export default function MembershipPasses({
               />
             </div>
 
-            <div className="col-span-5">
+            <div className="col-span-6 md:col-span-5">
               <label className="text-sm text-black">Price</label>
               <div className="flex items-center gap-2">
                 <span className="text-black">₹</span>
@@ -141,7 +141,7 @@ export default function MembershipPasses({
 
       <button
         onClick={addPackage}
-        className="w-full border border-dashed border-neutral-700 rounded-xl py-3 flex items-center text-black justify-center gap-2 hover:text-white cursor-pointer hover:bg-neutral-900 transition"
+        className="w-full md:w-fit px-4 border border-dashed border-neutral-700 rounded-xl py-3 flex items-center text-black justify-center gap-2 hover:text-white cursor-pointer hover:bg-neutral-900 transition"
       >
         <Plus className="w-5 h-5" />
         Add another package
