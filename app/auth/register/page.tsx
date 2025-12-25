@@ -51,18 +51,27 @@ export default function RegisterPage() {
 
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
+    // Prevent double submission
+    if (isLoading) {
+      return;
+    }
+
     const { confirmPassword, ...userData } = data;
 
     try {
       setIsLoading(true);
       const res: any = await dispatch(registerUser(userData));
-      if (res.payload.success) {
+      
+      if (res.meta.requestStatus === "fulfilled") {
         toast.success("Registration successful!");
         router.push("/auth/login");
+      } else {
+        const errorMessage = res.payload || "Registration failed. Please try again.";
+        toast.error(errorMessage);
       }
-    } catch (error) {
-      toast.error("Registration failed. Please try again.");
-      setIsLoading(false);
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast.error(error?.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }

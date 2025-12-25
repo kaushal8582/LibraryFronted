@@ -155,18 +155,25 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (credentials: RegisterCredentials, { rejectWithValue }) => {
     try {
-      const response = await apiCaller<{ user: User; token: string }>({
+      const response = await apiCaller<{ user: User; token: string; data?: any; success?: boolean }>({
         method: "POST",
         url: "/auth/register",
         data: credentials,
+        showError: false, // Handle error manually
       });
       
-      // Store token in localStorage
-      localStorage.setItem("accessToken", response.token);
-      console.log("response",response);
-      return response;
+      // Store token in localStorage if provided
+      if (response.token) {
+        localStorage.setItem("accessToken", response.token);
+      }
+      
+      console.log("response", response);
+      return { ...response, success: true };
     } catch (error: any) {
-      return rejectWithValue(error.message || "Registration failed");
+      // Extract error message from API response
+      // The error from apiCaller is already the response.data
+      const errorMessage = error?.message || error?.data?.message || "Registration failed";
+      return rejectWithValue(errorMessage);
     }
   }
 );
