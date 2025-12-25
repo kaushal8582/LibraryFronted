@@ -16,7 +16,6 @@ import {
   BookOpen,
   Zap,
   Shield,
-  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -28,6 +27,7 @@ import { truncateText } from "@/common/commonAction";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import SkeletonLoader from "@/components/loaders/SkeletonLoaders";
+import LogoLoader from "@/components/loaders/LogoLoader";
 
 export default function Home() {
 
@@ -164,7 +164,7 @@ export default function Home() {
                     {/* Loader */}
                     {libraryLoading && (
                       <div className="flex justify-center py-10">
-                        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                        <LogoLoader size={50} />
                       </div>
                     )}
 

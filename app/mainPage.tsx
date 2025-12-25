@@ -6,6 +6,7 @@ import { fetchCurrentUser } from "@/lib/slices/authSlice";
 import { AppDispatch, RootState } from "@/lib/store";
 import { Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import LogoLoader from "@/components/loaders/LogoLoader";
 
 const MainPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,8 +34,8 @@ const MainPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <h1 className="text-xl font-semibold">Loading...</h1>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <LogoLoader size={80} text="Loading..." />
       </div>
     );
   }
@@ -47,9 +48,7 @@ const MainPage = () => {
           <Dashboard />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <h1 className="text-xl font-semibold">
-              loading...
-            </h1>
+            <LogoLoader size={60} text="Loading..." />
           </div>
         )}
       </main>

@@ -76,19 +76,22 @@ export default function StudentDashboard() {
         })
       );
 
-    
-
-      if (response?.payload?.success) {
+      if (response?.payload?.success || response?.meta?.requestStatus === "fulfilled") {
         toast.success("Password updated successfully");
         setShowPasswordModal(false);
         setOldPassword("");
         setNewPassword("");
+        await dispatch(fetchCurrentUser());
         router.refresh();
+      } else {
+        toast.error(response?.payload || "Failed to update password");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating password:", error);
+      toast.error(error?.message || "Failed to update password");
     }
   };
+
 
   return (
     <div className="flex h-screen bg-background">
@@ -145,6 +148,15 @@ export default function StudentDashboard() {
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">
+                      Username
+                    </p>
+                    <p className="font-medium flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      {studentData?.username || "Not set"}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">
                       Phone Number
                     </p>
                     <p className="font-medium flex items-center gap-2">
@@ -175,7 +187,7 @@ export default function StudentDashboard() {
                   <div>
                     <button
                       onClick={() => setShowPasswordModal(true)}
-                      className="bg-primary text-primary-foreground px-4 py-2 rounded-md"
+                      className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
                     >
                       Update Password
                     </button>

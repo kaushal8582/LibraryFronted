@@ -36,14 +36,19 @@ const buttonVariants = cva(
 );
 
 // -------------------
-// Simple Loader
+// Logo Loader for Buttons
 // -------------------
+import { LibTrackLogoIcon } from "../logo";
+
 export default function ThreeDotLoader() {
   return (
-    <div className="flex items-center justify-center gap-2">
-      <span className="w-2 h-2 bg-white rounded-full dot"></span>
-      <span className="w-2 h-2 bg-white rounded-full dot"></span>
-      <span className="w-2 h-2 bg-white rounded-full dot"></span>
+    <div className="flex items-center justify-center">
+      <div className="relative">
+        <LibTrackLogoIcon size={18} />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-transparent border-t-white rounded-full animate-spin"></div>
+        </div>
+      </div>
     </div>
   );
 }

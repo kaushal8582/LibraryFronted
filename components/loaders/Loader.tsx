@@ -1,11 +1,11 @@
+import LogoLoader from "./LogoLoader";
 
 const Loader = () => {
   return (
-    <div className="w-full h-screen grid place-content-center">
-        <div className="size-10 rounded-full border-2 border-black border-t-white animate-spin"></div> 
+    <div className="w-full h-screen grid place-content-center bg-gray-50">
+      <LogoLoader size={80} text="Loading..." />
     </div>
-   
-  )
-}
+  );
+};
 
-export default Loader
+export default Loader;

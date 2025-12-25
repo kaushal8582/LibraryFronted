@@ -20,7 +20,6 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import {
-  fetchAllLibrary,
   fetchCurrentUser,
   loginUser,
 } from "@/lib/slices/authSlice";
@@ -38,7 +37,8 @@ import Nav from "@/components/hero/Nav";
 import Footer from "@/components/hero/Footer";
 
 type LoginFormInputs = {
-  email: string;
+  email?: string;
+  username?: string;
   password: string;
   role: "student" | "librarian";
   libraryId?: string;
@@ -60,36 +60,29 @@ export default function LoginPage() {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const { libraries } = useSelector((state: RootState) => state.auth);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<LoginFormInputs>({
     defaultValues: {
       role: "librarian",
     },
   });
 
-  // Fetch libraries when student role is selected
+  // Reset form when role changes
   useEffect(() => {
-    if (selectedRole === "student") {
-      const fetchLibraries = async () => {
-        try {
-          const res = await dispatch(fetchAllLibrary());
-          if (res.meta.requestStatus === "fulfilled") {
-            // setLibraries(res.payload);
-          }
-        } catch (error) {
-          console.error("Failed to fetch libraries:", error);
-        }
-      };
-      fetchLibraries();
-    }
-  }, [selectedRole]);
+    reset({
+      role: selectedRole,
+      email: "",
+      username: "",
+      password: "",
+      libraryId: "",
+    });
+  }, [selectedRole, reset]);
 
   // Watch role changes
   const watchedRole = watch("role");
@@ -102,30 +95,39 @@ export default function LoginPage() {
   }, [watchedRole]);
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    if (data.role === "student" && !data.libraryId) {
-      toast.error("Please Select Your Library");
-      return;
-    }
     try {
       setIsLoading(true);
-      const loginData = {
-        email: data.email,
+      const loginData: any = {
         password: data.password,
         role: data.role,
-        ...(data.role === "student" &&
-          data.libraryId && { libraryId: data.libraryId }),
       };
 
-      const res: any = await dispatch(loginUser(loginData as any));
+      // For students, use username; for librarians, use email
+      if (data.role === "student") {
+        if (!data.username) {
+          toast.error("Username is required");
+          setIsLoading(false);
+          return;
+        }
+        loginData.username = data.username;
+      } else {
+        if (!data.email) {
+          toast.error("Email is required");
+          setIsLoading(false);
+          return;
+        }
+        loginData.email = data.email;
+      }
+
+      const res: any = await dispatch(loginUser(loginData));
 
       if (res.meta.requestStatus === "fulfilled") {
         await dispatch(fetchCurrentUser());
         if (res.payload?.user?.role === "student") {
           router.push("/student/dashboard");
         } else {
-          router.push( "/dashboard");
+          router.push("/dashboard");
         }
-        
       }
     } catch (error) {
       setIsLoading(false);
@@ -150,24 +152,53 @@ export default function LoginPage() {
           </CardHeader>
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
-                )}
-              </div>
+              {/* Email field for librarians */}
+              {selectedRole === "librarian" && (
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="name@example.com"
+                    {...register("email", {
+                      required: selectedRole === "librarian" ? "Email is required" : false,
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">{errors.email.message}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Username field for students */}
+              {selectedRole === "student" && (
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    {...register("username", {
+                      required: selectedRole === "student" ? "Username is required" : false,
+                      minLength: {
+                        value: 3,
+                        message: "Username must be at least 3 characters",
+                      },
+                      pattern: {
+                        value: /^[a-z0-9_]+$/,
+                        message: "Username can only contain lowercase letters, numbers, and underscores",
+                      },
+                    })}
+                  />
+                  {errors.username && (
+                    <p className="text-sm text-red-500">{errors.username.message}</p>
+                  )}
+                </div>
+              )}
               <div className="relative space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
@@ -226,34 +257,6 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Library Selection for Students */}
-              {selectedRole === "student" && (
-                <div className="space-y-2">
-                  <Label htmlFor="libraryId">Library</Label>
-                  <Select
-                    onValueChange={(value) => setValue("libraryId", value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select library" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Libraries</SelectLabel>
-                        {libraries.map((library) => (
-                          <SelectItem key={library._id} value={library._id}>
-                            {library.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  {errors.libraryId && (
-                    <p className="text-sm text-red-500">
-                      {errors.libraryId.message}
-                    </p>
-                  )}
-                </div>
-              )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full" isLoading={isLoading}>

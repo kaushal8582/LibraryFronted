@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import toast from "react-hot-toast";
 
 
-const SERVER_URL = process.env.NEXT_PUBLIC_NODE_ENV !== "dev" ? "https://librarybackend-ke0y.onrender.com/api" :'http://localhost:5002/api'
+const SERVER_URL = 'http://localhost:5002/api'
 
 // ✅ Create Axios instance with some defaults
 const axiosInstance = axios.create({

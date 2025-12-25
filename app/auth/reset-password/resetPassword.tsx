@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/lib/store";
 import { resetPassword } from "@/lib/slices/authSlice";
 import { Suspense } from "react";
+import LogoLoader from "@/components/loaders/LogoLoader";
 
 const ForgetPwd = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +50,7 @@ const ForgetPwd = () => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><LogoLoader size={60} /></div>}>
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">

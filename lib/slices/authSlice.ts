@@ -45,6 +45,7 @@ export interface UserFullData {
   _id: string;
   name: string;
   email: string;
+  username?: string;
   avtar : string;
   bio?: string;
   role: "librarian" | "admin" | "student" | string;
@@ -80,8 +81,11 @@ interface AuthState {
 }
 
 interface LoginCredentials {
-  email: string;
+  email?: string;
+  username?: string;
   password: string;
+  role?: string;
+  libraryId?: string;
 }
 
 interface UpdatePasswordCredentials {
@@ -235,6 +239,37 @@ export const resetPassword = createAsyncThunk(
     }
   }
 );
+
+export const checkUsernameAvailability = createAsyncThunk(
+  "auth/checkUsernameAvailability",
+  async (username: string, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "GET",
+        url: `/auth/check-username?username=${encodeURIComponent(username)}`,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Check username failed");
+    }
+  }
+);
+
+export const updateUsername = createAsyncThunk(
+  "auth/updateUsername",
+  async (username: string, { rejectWithValue }) => {
+    try {
+      const response = await apiCaller<{ data: any }>({
+        method: "POST",
+        url: "/auth/update-username",
+        data: { username },
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Update username failed");
+    }
+  }
+);
 export const fetchAllLibrary = createAsyncThunk(
   "auth/fetchAllLibrary",
   async (_, { rejectWithValue }) => {
@@ -383,6 +418,24 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+
+      // update username cases
+      .addCase(updateUsername.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUsername.fulfilled, (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+        state.error = null;
+        // Update username in userFullData if it exists
+        if (state.userFullData) {
+          state.userFullData.username = action.payload.username;
+        }
+      })
+      .addCase(updateUsername.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })
